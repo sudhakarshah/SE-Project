@@ -30,3 +30,25 @@ class User(models.Model):
 
     def __str__(self):
         return self.name
+
+class HospitalLocation(models.Model):
+    name = models.CharField(max_length=200)
+    latitute =  models.DecimalField(max_digits=9, decimal_places=6)
+    longitute = models.DecimalField(max_digits=9, decimal_places=6)
+    altitude = models.DecimalField(max_digits=9, decimal_places=6)
+
+class ClinicLocation(models.Model):
+    name = models.CharField(max_length=200)
+    latitute =  models.DecimalField(max_digits=9, decimal_places=6)
+    longitute = models.DecimalField(max_digits=9, decimal_places=6)
+    altitude = models.DecimalField(max_digits=9, decimal_places=6)
+    supplying_hospital = models.ForeignKey(HospitalLocation, on_delete=models.CASCADE, null=True)
+    distance_from_supplying_hospital = models.DecimalField(max_digits=4, decimal_places=2)
+
+# class InterClinicDistance(models.Model):
+#     location_a = models.ForeignKey(ClinicLocation, on_delete=models.CASCADE, null=True)
+#     location_b = models.ForeignKey(ClinicLocation, on_delete=models.CASCADE, null=True)
+#     distance= models.DecimalField(max_digits=4, decimal_places=2)
+#
+#     def get_distance(a,b):
+#         return 0
