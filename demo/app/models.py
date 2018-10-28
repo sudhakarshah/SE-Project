@@ -26,7 +26,7 @@ class User(models.Model):
         ('WAREHOUSE_PERSONNEL', 'Warehouse Personnel'),
         ('DISPATCHER', 'Dispatcher'),
     )
-    role = models.CharField(max_length=2,choices=ROLE_CHOICES,default='CLINIC_MANAGER')
+    role = models.CharField(max_length=200,choices=ROLE_CHOICES,default='CLINIC_MANAGER')
 
     def __str__(self):
         return self.name
