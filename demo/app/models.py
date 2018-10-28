@@ -26,7 +26,7 @@ class User(models.Model):
         ('WAREHOUSE_PERSONNEL', 'Warehouse Personnel'),
         ('DISPATCHER', 'Dispatcher'),
     )
-    role = models.CharField(max_length=2,choices=ROLE_CHOICES,default='CLINIC_MANAGER')
+    role = models.CharField(max_length=200,choices=ROLE_CHOICES,default='CLINIC_MANAGER')
 
     def __str__(self):
         return self.name
@@ -52,3 +52,22 @@ class InterClinicDistance(models.Model):
 
     def get_distance(a,b):
         return 0
+
+class Order(models.Model):
+    total_weight = models.DecimalField(max_digits=5, decimal_places=2)
+    STATUS_CHOICES = (
+        ('QUEUED_FOR_PROCESSING', 'Queued for Processing'),
+        ('PROCESSING_BY_WAREHOUSE', 'Processing by Warehouse'),
+        ('QUEUED_FOR_DISPATCH', 'Queued for Dispatch'),
+        ('DISPATCHED', 'Dispatched')
+    )
+    status = models.CharField(max_length=200,choices=STATUS_CHOICES,default='QUEUED_FOR_PROCESSING')
+    date = models.DateTimeField(default=datetime.now, blank=True)
+    ordering_clinic = models.ForeignKey(ClinicLocation, on_delete=models.CASCADE, null=True)
+    supplying_hospital = models.ForeignKey(HospitalLocation, on_delete=models.CASCADE, null=True)
+    items = models.ManyToManyField(Item, through='OrderedItem')
+
+class OrderedItem(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, null=True)
+    item = models.ForeignKey(Item, on_delete=models.CASCADE, null=True)
+    quantity = models.IntegerField(max_digits=4, default=0)
