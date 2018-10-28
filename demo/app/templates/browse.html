@@ -1,5 +1,77 @@
 <HTML>
+	<head>
+			<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	</head>
   <BODY>
-    browse items here and select
+	<h2>Browse items here and select</h2>
+	<table>
+		{% for item in item_list %}
+			<tr>
+				<td><input type="checkbox" id="{{ item.id }}"" /></td>
+				<td>{{ item.id }}</a></td>
+				<td>{{ item.name }}</a></td>
+				<td>{{ item.category.name }}</a></td>
+				<td>{{ item.image }}</a></td>
+			</tr>
+		{% endfor %}
+	</table>
+
+	<div>
+		
+	</div>
+
+	<div id="test">
+		<h2>Cart</h2>
+
+	</div>
   </BODY>
 </HTML>
+
+<style>
+	table, th, td {
+		border: 1px solid black;
+	}
+</style>
+
+<script>
+	$(document).ready(function() {
+
+		var cart = [];
+
+		function addItem(id){
+			var item = {};
+			item.id=id;
+  			item.quantity=1;
+			cart.push(item);
+			  
+			var iDiv = document.createElement('div');
+			iDiv.id = 'cart-' + cart.length;
+			iDiv.className = 'block';
+			document.getElementsByTagName('body')[0].appendChild(iDiv);
+			
+			var para = document.createElement("span");
+			var node = document.createTextNode('Title: ' + item.id+' |                    ');
+			para.appendChild(node);
+
+			var element = document.getElementById('cart-' + cart.length);
+			element.appendChild(para);
+			
+			para = document.createElement("span");
+			node = document.createTextNode('Quantity: '+ item.quantity);
+			para.appendChild(node);
+			
+			element.appendChild(para);
+
+
+		}
+		$('input:checkbox').click(function() {
+			var isChecked = $(this).prop("checked");
+			if(isChecked){
+				addItem($(this).attr('id'));
+			}
+
+		});
+	
+	});
+</script>
+
