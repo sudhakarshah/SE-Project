@@ -6,7 +6,6 @@ def get_image_path(instance, filename):
     return os.path.join('photos', str(instance.id), filename)
 
 
-
 class Category(models.Model):
     name = models.CharField(max_length=30)
 
