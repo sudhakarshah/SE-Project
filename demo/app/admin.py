@@ -9,3 +9,6 @@ admin.site.register(User)
 admin.site.register(HospitalLocation)
 admin.site.register(ClinicLocation)
 admin.site.register(InterClinicDistance)
+admin.site.register(Order)
+admin.site.register(OrderedItem)
+
