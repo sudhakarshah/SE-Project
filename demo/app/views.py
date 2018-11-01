@@ -6,7 +6,7 @@ from .models import *
 
 
 def index(request):
-    return render(request, 'signin.html')
+    return render(request, 'signin/index.html')
 
 def browse_items(request):
 	# query from db
@@ -41,4 +41,7 @@ def browse_items(request):
 			'item_list': items,
 			'category_list': Categories,
 		}
-		return render(request, '/browse_items/index.html',context)
+		return render(request, 'browse_items/index.html', context)
+
+def browse_to_be_loaded(request):
+    return render(request, 'browse_to_be_loaded/index.html')
