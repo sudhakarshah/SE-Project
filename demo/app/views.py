@@ -8,7 +8,7 @@ from .models import *
 def index(request):
     return render(request, 'signin.html')
 
-def browse(request):
+def browse_items(request):
 	# query from db
 	# get all data of medicines
 	# if request.POST
@@ -41,4 +41,4 @@ def browse(request):
 			'item_list': items,
 			'category_list': Categories,
 		}
-		return render(request, 'browse.html',context)
+		return render(request, '/browse_items/index.html',context)
