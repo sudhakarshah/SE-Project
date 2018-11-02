@@ -1,190 +1,189 @@
 <script>
 
-  $(document).ready(function() {
+	$(document).ready(() => {
 
-    var maxWeight = 25;
-    var currentWeight = 0;
-    var cart = [];
+		var maxWeight = 5;
+		var currentWeight = 0;
+		var cart = [];
 
-    function addItem(id, name, weight) {
-      var item = {};
-      item.id = id;
-      item.weight = weight;
-      item.quantity = 1;
-      cart.push(item);
-      currentWeight = currentWeight + weight;
+		function addItem(id, name, weight) {
+			var item = {};
+			item.id = id;
+			item.weight = weight;
+			item.quantity = 1;
+			cart.push(item);
+			currentWeight = currentWeight + weight;
 
-      document.getElementById('currentWeight').innerHTML = 'Current weight is ' + currentWeight.toFixed(2) + ' kg';
+			document.getElementById('currentWeight').innerHTML = 'Current weight is ' + currentWeight.toFixed(2) + ' kg';
 
-      var itemDiv = document.createElement('div');
-      itemDiv.id = 'cart-' + item.id;
-      itemDiv.className = 'block';
-      document.getElementById('cart').appendChild(itemDiv);
+			var itemDiv = document.createElement('div');
+			itemDiv.id = 'cart-' + item.id;
+			itemDiv.className = 'block';
+			document.getElementById('cart').appendChild(itemDiv);
 
-      var para = document.createElement("span");
-      var node = document.createTextNode('Name: ' + name+' |                    ');
-      para.appendChild(node);
+			var para = document.createElement("span");
+			var node = document.createTextNode('Name: ' + name+' |                    ');
+			para.appendChild(node);
 
-      var element = document.getElementById('cart-' + item.id);
-      element.appendChild(para);
+			var element = document.getElementById('cart-' + item.id);
+			element.appendChild(para);
 
-      para = document.createElement("span");
-      para.setAttribute('id', 'quantity-id-'+item.id);
-      node = document.createTextNode('Quantity: '+ item.quantity);
-      para.appendChild(node);
+			para = document.createElement("span");
+			para.setAttribute('id', 'quantity-id-'+item.id);
+			node = document.createTextNode('Quantity: '+ item.quantity);
+			para.appendChild(node);
 
-      element.appendChild(para);
+			element.appendChild(para);
 
-      addButton = document.createElement("button");
-      addButton.setAttribute('id', 'addButton-' + id);
-      addButton.setAttribute('class', 'AddButton');
-      addButton.setAttribute('data-item-id', id);
-      addButton.innerHTML = '+';
-      element.appendChild(addButton);
+			addButton = document.createElement("button");
+			addButton.setAttribute('id', id);
+			addButton.setAttribute('class', 'AddButton');
+			addButton.setAttribute('data-item-id', id);
+			addButton.innerHTML = '+';
+			element.appendChild(addButton);
 
-      deleteButton = document.createElement("button");
-      deleteButton.setAttribute('id', 'deleteButton-' + id);
-      deleteButton.setAttribute('class', 'DeleteButton');
-      deleteButton.setAttribute('data-item-id', id);
-      deleteButton.innerHTML = '-';
-      element.appendChild(deleteButton);
+			deleteButton = document.createElement("button");
+			deleteButton.setAttribute('id', id);
+			deleteButton.setAttribute('class', 'DeleteButton');
+			deleteButton.setAttribute('data-item-id', id);
+			deleteButton.innerHTML = '-';
+			element.appendChild(deleteButton);
 
-    }
+		}
 
-    $(document).on('click', '.AddButton', () => {
-      var total = 0;
-      console.log($(this));
-      console.log($(this).data('item-id'),"this");
-      var itemId = $(this).data("item-id");
-    //  var itemId = $(this)["data-item-id"];
+		$(document).on('click', '.AddButton', () => {
+			var total = 0;
+			console.log($(this).get(0),this);
+			var itemId = $(this).get(0).addButton.attributes[0].nodeValue;
+		// var itemId = $(this)["data-item-id"];
 
-      $.each(cart, (i) => {
-        if(cart[i].id == itemId) {
-          cart[i].quantity += 1;
-          currentWeight = currentWeight + cart[i].weight;
-          document.getElementById('currentWeight').innerHTML = 'Current weight is ' + currentWeight.toFixed(2) + ' kg';
-          total = cart[i].quantity;
-          return false;
-        }
-      });
-      console.log(itemId,"itemId");
-      document.getElementById(`quantity-id-${itemId}`).innerHTML = 'Quantity: ' + total;
-      showSubmit();
-    });
+			$.each(cart, (i) => {
+				if(cart[i].id == itemId) {
+					cart[i].quantity += 1;
+					currentWeight = currentWeight + cart[i].weight;
+					document.getElementById('currentWeight').innerHTML = 'Current weight is ' + currentWeight.toFixed(2) + ' kg';
+					total = cart[i].quantity;
+					return false;
+				}
+			});
+			document.getElementById(`quantity-id-${itemId}`).innerHTML = 'Quantity: ' + total;
+			showSubmit();
+		});
 
-    $(document).on('click', '.DeleteButton', () => {
-      var negativeWeight = false;
-      var total = 0;
-      var itemId = $(this).data("item-id");
+		$(document).on('click', '.DeleteButton', () => {
+			var negativeWeight = false;
+			var total = 0;
+			var itemId = $(this).get(0).deleteButton.attributes[0].nodeValue;
+			// var itemId = $(this).data("item-id");
 
-      $.each(cart, (i) => {
-        if(cart[i].id == itemId) {
-          cart[i].quantity -= 1;
-          if(cart[i].quantity == 0) {
-            negativeWeight = true;
-          }
-          currentWeight = currentWeight - cart[i].weight;
-          document.getElementById('currentWeight').innerHTML = 'Current weight is ' + currentWeight.toFixed(2) + ' kg';
-          total = cart[i].quantity;
-          return false;
-        }
-      });
+			$.each(cart, (i) => {
+				if(cart[i].id == itemId) {
+					cart[i].quantity -= 1;
+					if(cart[i].quantity == 0) {
+						negativeWeight = true;
+					}
+					currentWeight = currentWeight - cart[i].weight;
+					document.getElementById('currentWeight').innerHTML = 'Current weight is ' + currentWeight.toFixed(2) + ' kg';
+					total = cart[i].quantity;
+					return false;
+				}
+			});
 
-      if(negativeWeight) {
-        $('#'+itemId).prop("checked", false);
-        deleteItem(itemId);
-      } else {
-        document.getElementById('quantity-id-'+itemId).innerHTML = 'Quantity: ' + total;
-      }
+			if(negativeWeight) {
+				$('#'+itemId).prop("checked", false);
+				deleteItem(itemId);
+			} else {
+				document.getElementById('quantity-id-'+itemId).innerHTML = 'Quantity: ' + total;
+			}
 
-      showSubmit();
+			showSubmit();
 
-    });
+		});
 
-    function deleteItem(id) {
+		function deleteItem(id) {
 
-      $.each(cart, (i) => {
-        if(cart[i].id === id) {
-          currentWeight = currentWeight - cart[i].weight * cart[i].quantity;
-          document.getElementById('currentWeight').innerHTML = 'Current weight is ' + currentWeight.toFixed(10) + ' kg';
-          cart.splice(i,1);
-          return false;
-        }
-      });
-      // removing html dom element
-      document.getElementById('cart-' + id).remove();
-    }
-
+			$.each(cart, (i) => {
+				if(cart[i].id === id) {
+					currentWeight = currentWeight - cart[i].weight * cart[i].quantity;
+					document.getElementById('currentWeight').innerHTML = 'Current weight is ' + currentWeight.toFixed(10) + ' kg';
+					cart.splice(i,1);
+					return false;
+				}
+			});
+			// removing html dom element
+			document.getElementById('cart-' + id).remove();
+		}
 
 
-    $('input:checkbox').click(function() {
 
-      var isChecked = $(this).prop("checked");
+		$('input:checkbox').click(function() {
 
-      if(isChecked){
-        addItem($(this).attr('id'), $(this).data('name'), parseFloat($(this).data('weight')));
-      }else{
-        deleteItem($(this).attr('id'));
-      }
-      showSubmit();
+			let isChecked = $(this).prop("checked");
 
-    });
+			if (isChecked) {
+				console.log($(this).attr('id'),"lllll\n");
+				addItem($(this).attr('id'), $(this).data('name'), parseFloat($(this).data('weight')));
+			} else {
+				deleteItem($(this).attr('id'));
+			}
+			showSubmit();
 
-    function showSubmit() {
-      console.log(currentWeight);
-      if(currentWeight > maxWeight) {
-        $('#warning').removeClass('hide').addClass('show');
-        $('#submitButton').removeClass('show').addClass('hide');
-      } else {
-        $('#warning').removeClass('show').addClass('hide');
-        $('#submitButton').removeClass('hide').addClass('show');
-      }
-    }
+		});
 
-    $.ajaxSetup({
-      beforeSend: function(xhr, settings) {
-        function getCookie(name) {
-          var cookieValue = null;
-          if (document.cookie && document.cookie != '') {
-            var cookies = document.cookie.split(';');
-            for (var i = 0; i < cookies.length; i++) {
-              var cookie = jQuery.trim(cookies[i]);
-              // Does this cookie string begin with the name we want?
-              if (cookie.substring(0, name.length + 1) == (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-              }
-            }
-          }
-          return cookieValue;
-        }
-        if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
-          // Only send the token to relative URLs i.e. locally.
-          xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
-        }
-      }
-     });
+		function showSubmit() {
+			if(currentWeight > maxWeight) {
+				$('#warning').removeClass('hide').addClass('show');
+				$('#submitButton').removeClass('show').addClass('hide');
+			} else {
+				$('#warning').removeClass('show').addClass('hide');
+				$('#submitButton').removeClass('hide').addClass('show');
+			}
+		}
 
-    $("#submitButton").click(function(){
+		$.ajaxSetup({
+			beforeSend: (xhr, settings) => {
+				function getCookie(name) {
+					var cookieValue = null;
+					if (document.cookie && document.cookie != '') {
+						var cookies = document.cookie.split(';');
+						for (var i = 0; i < cookies.length; i++) {
+							var cookie = jQuery.trim(cookies[i]);
+							// Does this cookie string begin with the name we want?
+							if (cookie.substring(0, name.length + 1) == (name + '=')) {
+								cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+								break;
+							}
+						}
+					}
+					return cookieValue;
+				}
+				if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+					// Only send the token to relative URLs i.e. locally.
+					xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+				}
+			}
+		 });
 
-      $.each(cart, function(i){
-        cart[i] = JSON.stringify(cart[i]);
-      });
+		$("#submitButton").click(() => {
+			let orderData = [];
+			$.each(cart, (i) => {
+				orderData.push(JSON.stringify(cart[i]));
+			});
+			$.ajax({
+				type: 'POST',
+				url: '/app/browse/items',
+				traditional: true,
+						dataType: 'html',
+				data: {
+					totalWeight: currentWeight,
+					'order[]': orderData
+				},
+				success: (result) => {
+					alert("Your Order Placed");
+					location.reload();
+				}
+			});
+		});
 
-      $.ajax({
-        type: 'POST',
-        url: '/app/browse/items',
-        traditional: true,
-            dataType: 'html',
-        data: {
-          totalWeight: currentWeight,
-          'order[]': cart
-        },
-        success: function(result){
-          console.log('okay');
-        }
-      });
-    });
-
-  });
+	});
 </script>
