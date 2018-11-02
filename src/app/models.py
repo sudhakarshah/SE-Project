@@ -42,9 +42,10 @@ class InterClinicDistance(models.Model):
         return 0
 
 class User(models.Model):
-    name = models.CharField(max_length=200)
+    first_name = models.CharField(max_length=200)
     last_name = models.CharField(max_length=200, blank=True)
     email = models.EmailField(max_length=254, unique=True)
+    username =  models.CharField(max_length=200, blank=True)
     password = models.CharField(max_length=200)
     ROLE_CHOICES = (
         ('CLINIC_MANAGER', 'Clinic Manager'),
@@ -54,6 +55,8 @@ class User(models.Model):
     role = models.CharField(max_length=200,choices=ROLE_CHOICES,default='CLINIC_MANAGER')
     clinic_location = models.ForeignKey(ClinicLocation, on_delete=models.CASCADE, null=True)
 
+    # def create_user(first_name, last_name, email, password, role='CLINIC_MANAGER', clinic_location):
+    #
 
     def __str__(self):
         return self.name
@@ -73,7 +76,12 @@ class Order(models.Model):
     supplying_hospital = models.ForeignKey(HospitalLocation, on_delete=models.CASCADE, null=True)
     items = models.ManyToManyField(Item, through='OrderedItem')
 
+    # def create_order(total_weight, ordering_clinic, supplying_hospital):
+
+
 class OrderedItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, null=True)
     item = models.ForeignKey(Item, on_delete=models.CASCADE, null=True)
     quantity = models.IntegerField(default=0)
+
+    # def create_orderedItem(order_id, item_id, quantity):

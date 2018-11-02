@@ -1,0 +1,80 @@
+[
+  {
+    "model": "app.category",
+    "pk": 1,
+    "fields": {
+      "name": "Intravenous fluid"
+    }
+  },
+  {
+    "model": "app.item",
+    "pk": 1,
+    "fields": {
+      "name": "Normal Saline",
+      "category": 1,
+      "image": "photos/None/sal-09.png",
+      "weight": "0.20"
+    }
+  },
+  {
+    "model": "app.item",
+    "pk": 2,
+    "fields": {
+      "name": "D5W",
+      "category": 1,
+      "image": "photos/None/url.jpg",
+      "weight": "0.60"
+    }
+  },
+  {
+    "model": "app.hospitallocation",
+    "pk": 1,
+    "fields": {
+      "name": "Queen Mary Hospital",
+      "latitute": "22.270060",
+      "longitute": "120.324340",
+      "altitude": "10.000000"
+    }
+  },
+  {
+    "model": "app.cliniclocation",
+    "pk": 1,
+    "fields": {
+      "name": "Sai Wan Clinic",
+      "latitute": "23.231320",
+      "longitute": "41.312000",
+      "altitude": "21.000000",
+      "supplying_hospital": 1,
+      "distance_from_supplying_hospital": "10.00"
+    }
+  },
+  {
+    "model": "app.order",
+    "pk": 6,
+    "fields": {
+      "total_weight": "2.60",
+      "status": "QUEUED_FOR_PROCESSING",
+      "date": "2018-10-30T04:58:07.337Z",
+      "ordering_clinic": 1,
+      "supplying_hospital": 1
+    }
+  },
+  {
+    "model": "app.ordereditem",
+    "pk": 1,
+    "fields": {
+      "order": 6,
+      "item": 2,
+      "quantity": 3
+    }
+  },
+  {
+    "model": "app.ordereditem",
+    "pk": 2,
+    "fields": {
+      "order": 6,
+      "item": 1,
+      "quantity": 4
+    }
+  }
+]
