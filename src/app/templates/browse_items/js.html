@@ -53,8 +53,9 @@
 
 		$(document).on('click', '.AddButton', () => {
 			var total = 0;
-			console.log($(this).get(0),this);
+			//console.log($(this)["data-item-id"],this);
 			var itemId = $(this).get(0).addButton.attributes[0].nodeValue;
+			console.log(itemId,"itemid");
 		// var itemId = $(this)["data-item-id"];
 
 			$.each(cart, (i) => {

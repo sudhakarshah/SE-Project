@@ -12,7 +12,7 @@
     "fields": {
       "name": "Normal Saline",
       "category": 1,
-      "image": "photos/None/sal-09.png",
+      "image": "photos/item/saline.jpeg",
       "weight": "0.20"
     }
   },
@@ -22,7 +22,7 @@
     "fields": {
       "name": "D5W",
       "category": 1,
-      "image": "photos/None/url.jpg",
+      "image": "photos/item/D5W.jpeg",
       "weight": "0.60"
     }
   },
@@ -40,14 +40,86 @@
     "model": "app.cliniclocation",
     "pk": 1,
     "fields": {
-      "name": "Sai Wan Clinic",
-      "latitute": "23.231320",
-      "longitute": "41.312000",
-      "altitude": "21.000000",
+      "name": "Mui Wo General Out-patient Clinic",
+      "latitute": "22.266040",
+      "longitute": "113.997882",
+      "altitude": "17",
       "supplying_hospital": 1,
-      "distance_from_supplying_hospital": "10.00"
+      "distance_from_supplying_hospital": "13.74"
     }
   },
+	{
+		"model": "app.cliniclocation",
+		"pk": 2,
+		"fields": {
+			"name": "North Lamma General Out-patient Clinic",
+			"latitute": "22.224295",
+			"longitute": "114.111098",
+			"altitude": "20",
+			"supplying_hospital": 1,
+			"distance_from_supplying_hospital": "5.52"
+		}
+	},
+	{
+		"model": "app.cliniclocation",
+		"pk": 3,
+		"fields": {
+			"name": "Peng Chau General Out-patient Clinic",
+			"latitute": "22.283621",
+			"longitute": "114.039154",
+			"altitude": "8",
+			"supplying_hospital": 1,
+			"distance_from_supplying_hospital": "9.61"
+		}
+	},
+	{
+		"model": "app.cliniclocation",
+		"pk": 4,
+		"fields": {
+			"name": "Sok Kwu Wan General Out-patient Clinic",
+			"latitute": "22.205606",
+			"longitute": "114.131597",
+			"altitude": "21.000000",
+			"supplying_hospital": 1,
+			"distance_from_supplying_hospital": "7.19"
+		}
+	},
+	{
+		"model": "app.cliniclocation",
+		"pk": 5,
+		"fields": {
+			"name": "Tai O Jockey Club General Out-patient Clinic",
+			"latitute": "22.255725",
+			"longitute": "113.857972",
+			"altitude": "2",
+			"supplying_hospital": 1,
+			"distance_from_supplying_hospital": "28.18"
+		}
+	},
+	{
+		"model": "app.cliniclocation",
+		"pk": 6,
+		"fields": {
+			"name": "Aberdeen Jockey Club General Out-patient Clinic",
+			"latitute": "22.249740",
+			"longitute": "114.156384",
+			"altitude": "44",
+			"supplying_hospital": 1,
+			"distance_from_supplying_hospital": "3.44"
+		}
+	},
+	{
+		"model": "app.cliniclocation",
+		"pk": 7,
+		"fields": {
+			"name": " Ap Lei Chau General Out-patient Clinic",
+			"latitute": "22.243243",
+			"longitute": "114.153765",
+			"altitude": "56",
+			"supplying_hospital": 1,
+			"distance_from_supplying_hospital": "3.79"
+		}
+	},
   {
     "model": "app.order",
     "pk": 6,
