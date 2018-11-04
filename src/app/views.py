@@ -21,7 +21,7 @@ def browse_items(request):
 
 		for item in orders:
 			item = json.loads(item)
-			orderedItem = OrderedItem.create_orderedItem(order.id, item['id'], item['quantity'])
+			orderedItem = OrderedItem.create_orderedItem(order.id, item['id'], item['quantity'], order)
 
 		return HttpResponse(orders)
 
@@ -35,4 +35,19 @@ def browse_items(request):
 		return render(request, 'browse_items/index.html', context)
 
 def browse_to_be_loaded(request):
-    return render(request, 'browse_to_be_loaded/index.html')
+
+	if request.method == 'POST':
+
+		orderId = request.POST['orderId']
+
+		Order.loaded_into_drone(orderId)
+		
+		return HttpResponse('test')
+
+	else:
+
+		orders = Order.objects.filter(status=Order.STATUS_CHOICES[2][0])
+		context = {
+			'order_list': orders,
+		}
+		return render(request, 'browse_to_be_loaded/index.html', context)

@@ -1,3 +1,48 @@
 <script>
 
+	$(document).ready(() => {
+
+		$.ajaxSetup({
+			beforeSend: (xhr, settings) => {
+				function getCookie(name) {
+					var cookieValue = null;
+					if (document.cookie && document.cookie != '') {
+						var cookies = document.cookie.split(';');
+						for (var i = 0; i < cookies.length; i++) {
+							var cookie = jQuery.trim(cookies[i]);
+							if (cookie.substring(0, name.length + 1) == (name + '=')) {
+								cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+								break;
+							}
+						}
+					}
+					return cookieValue;
+				}
+				if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+					xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+				}
+			}
+		 });
+
+		$("#submitButton").click((evt) => {
+
+			var id = $(evt.target).data('order-id');
+
+			$.ajax({
+				type: 'POST',
+				url: '/app/browse/OrdersToBeLoaded/',
+				traditional: true,
+				dataType: 'html',
+				data: {
+					orderId: id
+				},
+				success: (result) => {
+					alert("Loaded Into Drone");
+				}
+			});
+
+		});
+
+	});
+
 </script>

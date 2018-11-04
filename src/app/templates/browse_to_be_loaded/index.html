@@ -5,6 +5,32 @@
   <BODY>
 		{% include 'browse_to_be_loaded/js.html' %}
 		{% include 'browse_to_be_loaded/css.html' %}
-		See orders to be loaded
+		<h2>Order To Be loaded Onto Drone</h2>
+		<table>
+			<tr>
+				<th>ID</th>
+				<th>Required Supplies</th>
+				<th>Total Weight</th>
+				<th>From Location</th>
+				<th>To Location</th>
+				<th>Priority</th>
+				<th>Order status</th>
+				<th>Date</th>
+				<th>Action</th>
+			</tr>
+			{% for order in order_list %}
+				<tr>
+					<td>{{ order.id }}</td>
+					<td>{% for item in order.items.all %}{{ item.name }}<br/>{% endfor %}</td>
+					<td>{{ order.total_weight }} kg</td>
+					<td>{{ order.supplying_hospital.name }}</td>
+					<td>{{ order.ordering_clinic.name }}</td>
+					<td>-</td>
+					<td>{{ order.status }}</td>
+					<td>{{ order.date }}</td>
+					<td><input id="submitButton" type="submit" value="Loaded Into Drone" data-order-id='{{ order.id }}'/></td>
+				</tr>
+			{% endfor %}
+		</table>
   </BODY>
 </HTML>
