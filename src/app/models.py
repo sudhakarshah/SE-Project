@@ -89,17 +89,23 @@ class Order(models.Model):
 		order.ordering_clinic = orderingClinic
 		order.supplying_hospital = supplyingHospital
 		order.save()
-		return order;
+		return order
+
+	def loaded_into_drone(id):
+		order = Order.objects.get(id=id)
+		order.status = Order.STATUS_CHOICES[3][0]
+		order.save()
 
 class OrderedItem(models.Model):
 	order = models.ForeignKey(Order, on_delete=models.CASCADE, null=True)
 	item = models.ForeignKey(Item, on_delete=models.CASCADE, null=True)
 	quantity = models.IntegerField(default=0)
 
-	def create_orderedItem(orderId, itemId, quantity):
+	def create_orderedItem(orderId, itemId, quantity, order):
 		orderedItem = OrderedItem()
 		orderedItem.order = Order.objects.get(id=orderId)
 		orderedItem.item = Item.objects.get(id=itemId)
 		orderedItem.quantity = quantity
 		orderedItem.save()
+		order.items.add(orderedItem)
 		return orderedItem
