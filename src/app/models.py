@@ -1,7 +1,7 @@
 from django.db import models
 import os
 from datetime import datetime
-
+from django.utils import timezone
 # Create your models here.
 
 def get_image_path(instance, filename):
@@ -77,23 +77,33 @@ class Order(models.Model):
 		('QUEUED_FOR_DISPATCH', 'Queued for Dispatch'),
 		('DISPATCHED', 'Dispatched')
 	)
+	PRIORITY_CHOICES = (
+		('HIGH', 'High'),
+		('MEDIUM', 'Medium'),
+		('LOW', 'Low')
+	)
 	status = models.CharField(max_length=200,choices=STATUS_CHOICES,default='QUEUED_FOR_PROCESSING')
-	date = models.DateTimeField(default=datetime.now, blank=True)
 	ordering_clinic = models.ForeignKey(ClinicLocation, on_delete=models.CASCADE, null=True)
 	supplying_hospital = models.ForeignKey(HospitalLocation, on_delete=models.CASCADE, null=True)
+	priority = models.CharField(max_length=200,choices=PRIORITY_CHOICES,default='MEDIUM')
+	date_order_placed = models.DateTimeField(default=timezone.now, blank=True)
+	date_order_dispatched = models.DateTimeField(blank=True, null=True)
+	date_order_delivered = models.DateTimeField(blank=True, null=True)
 	items = models.ManyToManyField(Item, through='OrderedItem')
 
-	def create_order(totalWeight, orderingClinic, supplyingHospital):
+	def create_order(totalWeight, orderingClinic, supplyingHospital, priority='MEDIUM'):
 		order = Order()
 		order.total_weight = totalWeight
 		order.ordering_clinic = orderingClinic
 		order.supplying_hospital = supplyingHospital
+		order.priority = priority
 		order.save()
 		return order
 
 	def loaded_into_drone(id):
 		order = Order.objects.get(id=id)
 		order.status = Order.STATUS_CHOICES[3][0]
+		order.date_order_dispatched = timezone.now()
 		order.save()
 
 class OrderedItem(models.Model):
@@ -101,11 +111,10 @@ class OrderedItem(models.Model):
 	item = models.ForeignKey(Item, on_delete=models.CASCADE, null=True)
 	quantity = models.IntegerField(default=0)
 
-	def create_orderedItem(orderId, itemId, quantity, order):
+	def create_orderedItem(orderId, itemId, quantity):
 		orderedItem = OrderedItem()
 		orderedItem.order = Order.objects.get(id=orderId)
 		orderedItem.item = Item.objects.get(id=itemId)
 		orderedItem.quantity = quantity
 		orderedItem.save()
-		order.items.add(orderedItem)
 		return orderedItem

@@ -2,18 +2,15 @@ import json
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .models import *
-# Create your views here.
 
 
 def index(request):
     return render(request, 'signin/index.html')
 
 def browse_items(request):
-	# query from db
 	# get all data of medicines
-	# if request.POST
-
 	if request.method == 'POST':
+		print("post request")
 		orders = request.POST.getlist('order[]')
 		totalWeight = request.POST['totalWeight']
 		# creating an order object
@@ -21,7 +18,7 @@ def browse_items(request):
 
 		for item in orders:
 			item = json.loads(item)
-			orderedItem = OrderedItem.create_orderedItem(order.id, item['id'], item['quantity'], order)
+			orderedItem = OrderedItem.create_orderedItem(order.id, item['id'], item['quantity'])
 
 		return HttpResponse(orders)
 
@@ -36,16 +33,14 @@ def browse_items(request):
 
 def browse_to_be_loaded(request):
 
+	# updating order status to dispatched
 	if request.method == 'POST':
-
 		orderId = request.POST['orderId']
-
 		Order.loaded_into_drone(orderId)
-		
 		return HttpResponse('test')
 
 	else:
-
+		# rendering all orders with status QUEUED_FOR_DISPATCH
 		orders = Order.objects.filter(status=Order.STATUS_CHOICES[2][0])
 		context = {
 			'order_list': orders,
