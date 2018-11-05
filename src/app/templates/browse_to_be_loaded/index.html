@@ -25,10 +25,10 @@
 					<td>{{ order.total_weight }} kg</td>
 					<td>{{ order.supplying_hospital.name }}</td>
 					<td>{{ order.ordering_clinic.name }}</td>
-					<td>-</td>
+					<td>{{ order.priority }}</td>
 					<td>{{ order.status }}</td>
-					<td>{{ order.date }}</td>
-					<td><input id="submitButton" type="submit" value="Loaded Into Drone" data-order-id='{{ order.id }}'/></td>
+					<td>{{ order.date_order_placed }}</td>
+					<td><input class="submitButton" type="submit" value="Loaded Into Drone" data-order-id='{{ order.id }}'/></td>
 				</tr>
 			{% endfor %}
 		</table>

@@ -24,13 +24,12 @@
 			}
 		 });
 
-		$("#submitButton").click((evt) => {
-
-			var id = $(evt.target).data('order-id');
+		$(".submitButton").click((evt) => {
+			let id = $(evt.target).data('order-id');
 
 			$.ajax({
 				type: 'POST',
-				url: '/app/browse/OrdersToBeLoaded/',
+				url: '/app/OrdersToBeLoaded/',
 				traditional: true,
 				dataType: 'html',
 				data: {
@@ -38,11 +37,10 @@
 				},
 				success: (result) => {
 					alert("Loaded Into Drone");
+					location.reload();
 				}
 			});
-
 		});
-
 	});
 
 </script>
