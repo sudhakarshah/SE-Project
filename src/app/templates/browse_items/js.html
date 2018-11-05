@@ -51,12 +51,9 @@
 
 		}
 
-		$(document).on('click', '.AddButton', () => {
+		$(document).on('click', '.AddButton', (evt) => {
 			var total = 0;
-			//console.log($(this)["data-item-id"],this);
-			var itemId = $(this).get(0).addButton.attributes[0].nodeValue;
-			console.log(itemId,"itemid");
-		// var itemId = $(this)["data-item-id"];
+			var itemId = $(evt.target).data("item-id");
 
 			$.each(cart, (i) => {
 				if(cart[i].id == itemId) {
@@ -71,11 +68,11 @@
 			showSubmit();
 		});
 
-		$(document).on('click', '.DeleteButton', () => {
+		$(document).on('click', '.DeleteButton', (evt) => {
+
 			var negativeWeight = false;
 			var total = 0;
-			var itemId = $(this).get(0).deleteButton.attributes[0].nodeValue;
-			// var itemId = $(this).data("item-id");
+			var itemId = $(evt.target).data("item-id");
 
 			$.each(cart, (i) => {
 				if(cart[i].id == itemId) {
@@ -96,18 +93,16 @@
 			} else {
 				document.getElementById('quantity-id-'+itemId).innerHTML = 'Quantity: ' + total;
 			}
-
 			showSubmit();
-
 		});
 
 		function deleteItem(id) {
 
 			$.each(cart, (i) => {
-				if(cart[i].id === id) {
+				if(cart[i].id == id) {
 					currentWeight = currentWeight - cart[i].weight * cart[i].quantity;
-					document.getElementById('currentWeight').innerHTML = 'Current weight is ' + currentWeight.toFixed(10) + ' kg';
-					cart.splice(i,1);
+					document.getElementById('currentWeight').innerHTML = 'Current weight is ' + currentWeight.toFixed(2) + ' kg';
+					cart.splice(i, 1);
 					return false;
 				}
 			});
@@ -115,14 +110,11 @@
 			document.getElementById('cart-' + id).remove();
 		}
 
-
-
 		$('input:checkbox').click(function() {
 
 			let isChecked = $(this).prop("checked");
 
 			if (isChecked) {
-				console.log($(this).attr('id'),"lllll\n");
 				addItem($(this).attr('id'), $(this).data('name'), parseFloat($(this).data('weight')));
 			} else {
 				deleteItem($(this).attr('id'));
