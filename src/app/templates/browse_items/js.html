@@ -37,14 +37,14 @@
 
 			addButton = document.createElement("button");
 			addButton.setAttribute('id', id);
-			addButton.setAttribute('class', 'AddButton');
+			addButton.setAttribute('class', 'AddButton btn btn-outline-warning');
 			addButton.setAttribute('data-item-id', id);
 			addButton.innerHTML = '+';
 			element.appendChild(addButton);
 
 			deleteButton = document.createElement("button");
 			deleteButton.setAttribute('id', id);
-			deleteButton.setAttribute('class', 'DeleteButton');
+			deleteButton.setAttribute('class', 'DeleteButton btn btn-outline-danger');
 			deleteButton.setAttribute('data-item-id', id);
 			deleteButton.innerHTML = '-';
 			element.appendChild(deleteButton);
