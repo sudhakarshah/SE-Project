@@ -32,7 +32,7 @@
 		"fields": {
 			"name": "B Braun Medical Lactated Ringers 250ml",
 			"category": 1,
-			"image": "photos/item/B Braun Lactated Ringers 250ml.JPG",
+			"image": "photos/item/B_Braun_Lactated_Ringers_250ml.JPG",
 			"weight": "0.27"
 		}
 	},
@@ -42,7 +42,7 @@
 		"fields": {
 			"name": "ICU Medical Normosol-R Ph 7.4 500ml",
 			"category": 1,
-			"image": "photos/item/ICU Medical Normosol 500ml.JPG",
+			"image": "photos/item/ICU_Medical_Normosol_500ml.JPG",
 			"weight": "0.53"
 		}
 	},
@@ -52,7 +52,7 @@
 		"fields": {
 			"name": "Baxter Dextrose 5%, NaCl 0.33% 1000ml",
 			"category": 1,
-			"image": "photos/item/Baxter Dextrose NaCl 1000ml.JPG",
+			"image": "photos/item/Baxter_Dextrose_NaCl_1000ml.JPG",
 			"weight": "1.05"
 		}
 	},
@@ -149,34 +149,5 @@
 			"supplying_hospital": 1,
 			"distance_from_supplying_hospital": "3.79"
 		}
-	},
-  {
-    "model": "app.order",
-    "pk": 6,
-    "fields": {
-      "total_weight": "2.60",
-      "status": "QUEUED_FOR_PROCESSING",
-      "date": "2018-10-30T04:58:07.337Z",
-      "ordering_clinic": 1,
-      "supplying_hospital": 1
-    }
-  },
-  {
-    "model": "app.ordereditem",
-    "pk": 1,
-    "fields": {
-      "order": 6,
-      "item": 2,
-      "quantity": 3
-    }
-  },
-  {
-    "model": "app.ordereditem",
-    "pk": 2,
-    "fields": {
-      "order": 6,
-      "item": 1,
-      "quantity": 4
-    }
-  }
+	}
 ]
