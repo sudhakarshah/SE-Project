@@ -106,6 +106,16 @@ class Order(models.Model):
 		order.date_order_dispatched = timezone.now()
 		order.save()
 
+	def ready_to_process(id):
+		order = Order.objects.get(id=id)
+		order.status = Order.STATUS_CHOICES[1][0]
+		order.save()
+
+	def complete_processing(id):
+		order = Order.objects.get(id=id)
+		order.status = Order.STATUS_CHOICES[2][0]
+		order.save()
+
 class OrderedItem(models.Model):
 	order = models.ForeignKey(Order, on_delete=models.CASCADE, null=True)
 	item = models.ForeignKey(Item, on_delete=models.CASCADE, null=True)
