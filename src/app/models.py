@@ -55,14 +55,15 @@ class User(models.Model):
 	role = models.CharField(max_length=200,choices=ROLE_CHOICES,default='CLINIC_MANAGER')
 	clinic_location = models.ForeignKey(ClinicLocation, on_delete=models.CASCADE, null=True)
 
-	# def create_user(firstName, lastName, email, password, username, clinicLocation):
-	# 	user = User()
-	# 	user.first_name = firstName
-	# 	user.last_name = lastName
-	# 	user.email = email
-	# 	user.username = username
-	# 	user.clinicLocation =
-	#	user.save()
+	def create_user(firstName, lastName, email, password, username, clinicLocation):
+		user = User()
+		user.first_name = firstName
+		user.last_name = lastName
+		user.email = email
+		user.password = password
+		user.username = username
+		# user.clinicLocation =
+		user.save()
 
 
 	def __str__(self):

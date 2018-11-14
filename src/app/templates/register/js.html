@@ -1,3 +1,4 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script>
 
 	$(document).ready(() => {
@@ -29,14 +30,14 @@
 
 			$.ajax({
 				type: 'POST',
-				url: '/app/registered/',
+				url: '/apps/register',
 				traditional: true,
 				dataType: 'html',
 				data: {
-					orderId: id
+					// orderId: id
 				},
 				success: (result) => {
-					alert("register success");
+					alert("Signin Success");
 					location.reload();
 				}
 			});
