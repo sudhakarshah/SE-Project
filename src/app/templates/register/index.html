@@ -13,14 +13,34 @@
 		
 		<div class="split left">
 		  <div class="centered">
+		  	<div><b>Register</b></div>
+		  	<div style="font-size: 10px">Please fill in the following details to register</div><br>
 		 	<div class="form-group">
-			  <input type="text" class="form-control" id="usr" placeholder="Username">
+			  <input name="firstname" type="text" class="form-control" id="usr" placeholder="First Name">
 			</div>
 			<div class="form-group">
-			  <input type="password" class="form-control" id="pwd" placeholder="password">
+			  <input name="lastname" type="text" class="form-control" id="pwd" placeholder="Last Name">
 			</div>
-			   <button id="name" name="login" type="button" class="btn btn-primary" >LOGIN</button>
-			  <button id="register" name="register" type="button" class="btn btn-primary" onclick="location.href='http://127.0.0.1:8000/app/register'">REGISTER</button>
+			<div class="form-group">
+			  <input name="email" type="text" class="form-control" id="usr" placeholder="Email">
+			</div>
+			<div class="form-group">
+			  <select name="userGroup" type="text" class="form-control" id="usr" placeholder="User Group">
+				<option>Clinic Manager</option>
+				<option>Warehouse Personnel</option>
+				<option>Dispatcher</option>
+			  </select>
+			</div>
+			<div class="form-group">
+			  <input name="username" type="text" class="form-control" id="usr" placeholder="Username">
+			</div>
+			<div class="form-group">
+			  <input name="password" type="text" class="form-control" id="usr" placeholder="Password">
+			</div>
+			<div class="form-group">
+			  <input name="reEnterPassword" type="text" class="form-control" id="usr" placeholder="Re-enter Password">
+			</div>
+			  <button id="register" name="register" type="button" class="btn btn-primary">REGISTER</button>
 		  </div>
 		</div>
 

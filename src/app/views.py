@@ -7,6 +7,9 @@ from .models import *
 def index(request):
     return render(request, 'signin/index.html')
 
+def register(request):
+    return render(request, 'register/index.html')
+
 def browse_items(request):
 	# get all data of medicines
 	if request.method == 'POST':
