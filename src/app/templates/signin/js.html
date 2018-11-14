@@ -26,20 +26,39 @@
 		 });
 
 		$("#register").click((evt) => {
-			// let id = $(evt.target).data('order-id');
 
 			$.ajax({
 				type: 'POST',
-				url: '/apps',
+				url: '/app/register',
 				traditional: true,
 				dataType: 'html',
 				data: {
-					// orderId: id
-					username: $("#username").val(),
-					password: $("#password").val()
+					firstName: $('#firstname').val(),
+					lastName: $('#lastname').val(),
+					email: $('#email').val(),
+					username: $('#username').val(),
+					password: $('#password').val(),
+					role_choices: $('#role').val(),
+					clinicLocation: 'hk',
 				},
 				success: (result) => {
-					alert("Signin Success");
+					alert("Register Success");
+					location.reload();
+				}
+			});
+		});
+
+		$("#login").click((evt) => {
+			// let id = $(evt.target).data('order-id');
+			$.ajax({
+				type: 'GET',
+				url: '/app',
+				traditional: true,
+				dataType: 'html',
+				data: {		
+				},
+				success: (result) => {
+					alert("Login in Success");
 					location.reload();
 				}
 			});

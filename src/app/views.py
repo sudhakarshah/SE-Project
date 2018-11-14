@@ -5,18 +5,21 @@ from .models import *
 
 
 def index(request):
-    # if request.method == 'POST':
-    #     data = User.objects.all()
-    #     username = request.POST['username']
-    #     password = request.POST['password']        
-    #     return HttpResponse(orders)
-    # else:
+    if request.method == 'GET':        
+        return render(request, 'signin/index.html')
+    else:
         return render(request, 'signin/index.html')
 
 def register(request):
     if request.method == 'POST':
-        register_instance = User.objects.create(firnst_name='first_name', last_name='last_name', email='email',username='username',password='password',ROLE_CHOICES='CLINIC_MANAGER',role='role',clinic_location='loaction');
-        alert('here')
+        firstName = request.POST['firstName']
+        lastName = request.POST['lastName']
+        email = request.POST['email']
+        password = request.POST['password']
+        username = request.POST['username']
+        role_choices = request.POST['role_choices']
+        clinicLocation = request.POST['clinicLocation']
+        register_instance = User.create_user(firstName=firstName, lastName=lastName, email=email,username=username,password=password,role_choices=role_choices, clinicLocation= clinicLocation);
         return render(request, 'register/index.html')
     else:    
         return render(request, 'register/index.html')
