@@ -11,4 +11,5 @@ admin.site.register(ClinicLocation)
 admin.site.register(InterClinicDistance)
 admin.site.register(Order)
 admin.site.register(OrderedItem)
+admin.site.register(InitialTokenRegistration)
 

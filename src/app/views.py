@@ -1,28 +1,60 @@
 import json
+import uuid
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
+from django.contrib.auth import authenticate
+from django.views.decorators.csrf import csrf_exempt
+
 from .models import *
 
 
 def index(request):
-    if request.method == 'GET':        
-        return render(request, 'signin/index.html')
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(username=username, password=password)   
+        if user is not None:
+            # Authenticated
+            return render(request, 'signin/index.html')
     else:
         return render(request, 'signin/index.html')
 
-def register(request):
+@csrf_exempt
+def register_details(request):
     if request.method == 'POST':
         firstName = request.POST['firstName']
         lastName = request.POST['lastName']
         email = request.POST['email']
-        password = request.POST['password']
+        role = request.POST['role']
+        clinicName = request.POST['clinicName']
         username = request.POST['username']
-        role_choices = request.POST['role_choices']
-        clinicLocation = request.POST['clinicLocation']
-        register_instance = User.create_user(firstName=firstName, lastName=lastName, email=email,username=username,password=password,role_choices=role_choices, clinicLocation= clinicLocation);
-        return render(request, 'register/index.html')
-    else:    
-        return render(request, 'register/index.html')
+        password = request.POST['password']
+        register_user_instance = User.create_user(firstName, lastName, email, role, clinicName, username, password)
+        return HttpResponse("Success")
+    else:
+        token_id = request.GET['token']
+        initial_registration_data = InitialTokenRegistration.objects.get(unique_token=token_id)
+        clinics = ClinicLocation.objects.all()
+        context = {
+            'initial_data': initial_registration_data,
+            'clinics': clinics,
+            'need_clinic_location': True,
+        }
+        return render(request, 'register_with_details/index.html', context)
+
+@csrf_exempt
+def register_send_token(request):
+    if request.method == 'POST':
+        email = request.POST['email']
+        #role_choice = request.POST['role_choices']
+        role = "CLINIC_MANAGER"
+        # See how to generate email to log file
+        unique_token = str(uuid.uuid3(uuid.NAMESPACE_DNS, email))
+        print ("http://localhost:8000/app/registration?token=" + unique_token)
+        register_token_instance = InitialTokenRegistration.create(unique_token, email, role)
+        return render(request, 'register_send_token/index.html')
+    else:
+        return render(request, 'register_send_token/index.html')
 
 def browse_items(request):
     # get all data of medicines

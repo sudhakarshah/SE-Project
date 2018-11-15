@@ -1,0 +1,56 @@
+<HTML>
+	<head>
+			<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+			<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.1/jquery.min.js"></script>
+			<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+	</head>
+  <BODY>
+		{% include 'register_with_details/js.html' %}
+		{% include 'register_with_details/css.html' %}
+		
+		<div class="split left">
+		  <div class="centered">
+		  	<div><b>Register</b></div>
+		  	<div style="font-size: 10px">Please fill in the following details to register</div><br>
+		 	<div class="form-group">
+			  <input name="firstname" type="text" class="form-control" id="firstname" placeholder="First Name">
+			</div>
+			<div class="form-group">
+			  <input name="lastname" type="text" class="form-control" id="lastname" placeholder="Last Name">
+			</div>
+			<div class="form-group">
+			  <input name="email" type="text" value={{initial_data.email}} class="form-control" id="email" placeholder="Email" readonly>
+			</div>
+			  <div class="form-group">
+			  <input name="role" type="text" value={{initial_data.role}} class="form-control" id="role" placeholder="User Group" readonly>
+			</div>
+            {% if need_clinic_location == True %}
+			  <div class="form-group">
+			  <select name="clinic" type="text" class="form-control" id="clinicName" placeholder="Clinic Name">
+                  <option selected disabled hidden>Choose Clinic</option>
+                  {% for clinic in clinics %}
+                      <option> {{clinic.name}} </option>
+                  {% endfor %}
+			  </select>
+            </div>
+              {% endif %}
+			<div class="form-group">
+			  <input name="username" type="text" class="form-control" id="username" placeholder="Username">
+			</div>
+			<div class="form-group">
+			  <input name="password" type="password" class="form-control" id="password" placeholder="Password">
+			</div>
+			<div class="form-group">
+			  <input name="reEnterPassword" type="password" class="form-control" id="reenterpassword" placeholder="Re-enter Password">
+			</div>
+			  <button id="register" name="register" type="button" class="btn btn-primary">REGISTER</button>
+		  </div>
+		</div>
+
+		<div class="split right">
+		  <div class="centered">
+		  </div>
+		</div>
+
+  </BODY>
+</HTML>
