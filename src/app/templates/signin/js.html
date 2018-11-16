@@ -35,17 +35,22 @@
 		});
 
 		$("#login").click((evt) => {
-			// let id = $(evt.target).data('order-id');
 			$.ajax({
-				type: 'GET',
-				url: '/app',
+				type: 'POST',
+				url: '/app/',
 				traditional: true,
 				dataType: 'html',
-				data: {		
+				data: {
+				    username: $('#username').val(),
+					password: $('#password').val(),
 				},
 				success: (result) => {
-					alert("Login in Success");
-					location.reload();
+					if (result == "Success")
+					    window.location.replace("http://localhost:8000/app/items");
+					else {
+					    alert("Login Unsuccessful");
+					    location.reload();
+					}
 				}
 			});
 		});

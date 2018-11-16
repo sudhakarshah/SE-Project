@@ -3,19 +3,22 @@ import uuid
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth import authenticate
+from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 
 from .models import *
 
-
+@csrf_exempt
 def index(request):
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
-        user = authenticate(username=username, password=password)   
+        user = authenticate(username=username, password=password)
         if user is not None:
             # Authenticated
-            return render(request, 'signin/index.html')
+            return HttpResponse("Success")
+        else:
+            return HttpResponse("Fail")
     else:
         return render(request, 'signin/index.html')
 
@@ -26,19 +29,25 @@ def register_details(request):
         lastName = request.POST['lastName']
         email = request.POST['email']
         role = request.POST['role']
-        clinicName = request.POST['clinicName']
+        clinicName = None
+        if 'clinicName' in request.POST:
+            clinicName = request.POST['clinicName']
         username = request.POST['username']
         password = request.POST['password']
-        register_user_instance = User.create_user(firstName, lastName, email, role, clinicName, username, password)
+        register_user_instance = Profile.create_profile(firstName, lastName, email, role, clinicName, username, password)
         return HttpResponse("Success")
     else:
         token_id = request.GET['token']
         initial_registration_data = InitialTokenRegistration.objects.get(unique_token=token_id)
         clinics = ClinicLocation.objects.all()
+        need_clinic_location = False
+        # Will only need clinic location if they are a clinic manager
+        if initial_registration_data.role == "CLINIC_MANAGER":
+            need_clinic_location = True
         context = {
             'initial_data': initial_registration_data,
             'clinics': clinics,
-            'need_clinic_location': True,
+            'need_clinic_location': need_clinic_location,
         }
         return render(request, 'register_with_details/index.html', context)
 
@@ -46,8 +55,7 @@ def register_details(request):
 def register_send_token(request):
     if request.method == 'POST':
         email = request.POST['email']
-        #role_choice = request.POST['role_choices']
-        role = "CLINIC_MANAGER"
+        role = request.POST['role_choices']
         # See how to generate email to log file
         unique_token = str(uuid.uuid3(uuid.NAMESPACE_DNS, email))
         print ("http://localhost:8000/app/registration?token=" + unique_token)
@@ -81,7 +89,6 @@ def browse_items(request):
         return render(request, 'browse_items/index.html', context)
 
 def browse_to_be_loaded(request):
-
     # updating order status to dispatched
     if request.method == 'POST':
         orderId = request.POST['orderId']
