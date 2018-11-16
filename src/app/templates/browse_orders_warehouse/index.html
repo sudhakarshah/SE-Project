@@ -30,7 +30,7 @@
 						<td>{{ order.total_weight }} kg</td>
 						<td>{{ order.supplying_hospital.name }}</td>
 						<td>{{ order.ordering_clinic.name }}</td>
-						<td>{{ order.priority }}</td>
+						<td>{{ order.get_priority_display }}</td>
 						<td>{{ order.status }}</td>
 						<td>{{ order.date_order_placed }}</td>
 						<td><input class="readyProcessButton btn btn-success" type="submit" value="Ready To Process" data-order-id='{{ order.id }}'/></td>

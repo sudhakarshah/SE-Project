@@ -60,7 +60,7 @@ def browse_to_be_loaded(request):
 
 	else:
 		# rendering all orders with status QUEUED_FOR_DISPATCH
-		orders = Order.objects.filter(status=Order.STATUS_CHOICES[2][0])
+		orders = Order.objects.filter(status=Order.STATUS_CHOICES[2][0]).order_by('-priority')
 		context = {
 			'order_list': orders,
 		}
@@ -105,8 +105,8 @@ def browse_to_be_processed(request):
 		return HttpResponse('test')
 
 	else:
-		processOrders = Order.objects.filter(status=Order.STATUS_CHOICES[0][0])
-		packOrders = Order.objects.filter(status=Order.STATUS_CHOICES[1][0])
+		processOrders = Order.objects.filter(status=Order.STATUS_CHOICES[0][0]).order_by('-priority')
+		packOrders = Order.objects.filter(status=Order.STATUS_CHOICES[1][0]).order_by('-priority')
 		context = {
 			'process_order_list': processOrders,
 			'pack_order_list': packOrders,
