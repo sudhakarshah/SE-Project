@@ -1,11 +1,13 @@
 from django.db import models
+from django.contrib.auth.models import User
 import os
 from datetime import datetime
+
 from django.utils import timezone
 # Create your models here.
 
 def get_image_path(instance, filename):
-	return os.path.join("photos","item",filename)
+	return os.path.join("photos", "item", filename)
 
 
 class Category(models.Model):
@@ -41,12 +43,30 @@ class InterClinicDistance(models.Model):
 	def get_distance(a,b):
 		return 0
 
-class User(models.Model):
+class InitialTokenRegistration(models.Model):
+	unique_token = models.CharField(max_length=64, unique=True)
+	email = models.EmailField(max_length=254, unique=True)
+	ROLE_CHOICES = (
+		('CLINIC_MANAGER', 'Clinic Manager'),
+		('WAREHOUSE_PERSONNEL', 'Warehouse Personnel'),
+		('DISPATCHER', 'Dispatcher'),
+	)
+	role = models.CharField(max_length=200, choices=ROLE_CHOICES, default='CLINIC_MANAGER')
+
+	def create(unique_token, email, role):
+		initial_register = InitialTokenRegistration()
+		initial_register.unique_token = unique_token
+		initial_register.email = email
+		# To map the role choices
+		for select_role in InitialTokenRegistration.ROLE_CHOICES:
+			if select_role[1] == role:
+				initial_register.role = select_role[0]
+		initial_register.save()
+
+class Profile(models.Model):
+	user = models.ForeignKey(User, on_delete=models.CASCADE)
 	first_name = models.CharField(max_length=32)
 	last_name = models.CharField(max_length=32, blank=True)
-	email = models.EmailField(max_length=254, unique=True)
-	username =  models.CharField(max_length=32, blank=True)
-	password = models.CharField(max_length=32)
 	ROLE_CHOICES = (
 		('CLINIC_MANAGER', 'Clinic Manager'),
 		('WAREHOUSE_PERSONNEL', 'Warehouse Personnel'),
@@ -55,20 +75,27 @@ class User(models.Model):
 	role = models.CharField(max_length=200,choices=ROLE_CHOICES,default='CLINIC_MANAGER')
 	clinic_location = models.ForeignKey(ClinicLocation, on_delete=models.CASCADE, null=True)
 
-	def create_user(firstName, lastName, email, password, username, clinicLocation, role_choices):
-		user = User()
-		user.first_name = firstName
-		user.last_name = lastName
-		user.ROLE_CHOICES = role_choices
-		user.email = email
-		user.password = password
-		user.username = username
-		user.clinicLocation = clinicLocation
-		user.save()
+	def create_profile(firstName, lastName, email, role, clinicName,  username, password):
+		user_details = Profile()
+		user_details.first_name = firstName
+		user_details.last_name = lastName
+		user_details.role = role
+		create_user = User.objects.create_user(username, email, password)
+		create_user.save()
+		user_details.user = create_user
 
+		# To save the foreign key
+		if clinicName != None:
+			clinicLocation = ClinicLocation.objects.get(name=clinicName)
+			clinicLocation.save()
+		else:
+			clinicLocation = clinicName
+
+		user_details.clinic_location = clinicLocation
+		user_details.save()
 
 	def __str__(self):
-		return self.username
+		return self.first_name
 
 
 class Order(models.Model):

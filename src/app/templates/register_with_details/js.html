@@ -1,4 +1,3 @@
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script>
 
 	$(document).ready(() => {
@@ -25,32 +24,25 @@
 			}
 		 });
 
-		$("#registerPage").click((evt) => {
+		$("#register").click((evt) => {
 
-			$.ajax({
-				type: 'GET',
-				url: '/app/registerSendToken',
-				traditional: true,
-			});
-		});
-
-		$("#login").click((evt) => {
 			$.ajax({
 				type: 'POST',
-				url: '/app/',
+				url: '/app/registration/',
 				traditional: true,
 				dataType: 'html',
 				data: {
-				    username: $('#username').val(),
+				    firstName: $('#firstname').val(),
+				    lastName: $('#lastname').val(),
+					email: $('#email').val(),
+					role: $('#role').val(),
+					clinicName: $('#clinicName').val(),
+					username: $('#username').val(),
 					password: $('#password').val(),
 				},
 				success: (result) => {
-					if (result == "Success")
-					    window.location.replace("http://localhost:8000/app/items");
-					else {
-					    alert("Login Unsuccessful");
-					    location.reload();
-					}
+					alert("Registration sent!");
+					window.location.replace("http://localhost:8000/app/");
 				}
 			});
 		});

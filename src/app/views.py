@@ -1,31 +1,71 @@
 import json
 import io
 from io import BytesIO
+import uuid
+from reportlab.pdfgen import canvas
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from reportlab.pdfgen import canvas
+from django.contrib.auth import authenticate
+from django.contrib.auth.models import User
+from django.views.decorators.csrf import csrf_exempt
+
 from .models import *
 
-
+@csrf_exempt
 def index(request):
-    if request.method == 'GET':        
-        return render(request, 'signin/index.html')
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            # Authenticated
+            return HttpResponse("Success")
+        else:
+            return HttpResponse("Fail")
     else:
         return render(request, 'signin/index.html')
 
-def register(request):
+@csrf_exempt
+def register_details(request):
     if request.method == 'POST':
         firstName = request.POST['firstName']
         lastName = request.POST['lastName']
         email = request.POST['email']
-        password = request.POST['password']
+        role = request.POST['role']
+        clinicName = None
+        if 'clinicName' in request.POST:
+            clinicName = request.POST['clinicName']
         username = request.POST['username']
-        role_choices = request.POST['role_choices']
-        clinicLocation = request.POST['clinicLocation']
-        register_instance = User.create_user(firstName=firstName, lastName=lastName, email=email,username=username,password=password,role_choices=role_choices, clinicLocation= clinicLocation);
-        return render(request, 'register/index.html')
-    else:    
-        return render(request, 'register/index.html')
+        password = request.POST['password']
+        register_user_instance = Profile.create_profile(firstName, lastName, email, role, clinicName, username, password)
+        return HttpResponse("Success")
+    else:
+        token_id = request.GET['token']
+        initial_registration_data = InitialTokenRegistration.objects.get(unique_token=token_id)
+        clinics = ClinicLocation.objects.all()
+        need_clinic_location = False
+        # Will only need clinic location if they are a clinic manager
+        if initial_registration_data.role == "CLINIC_MANAGER":
+            need_clinic_location = True
+        context = {
+            'initial_data': initial_registration_data,
+            'clinics': clinics,
+            'need_clinic_location': need_clinic_location,
+        }
+        return render(request, 'register_with_details/index.html', context)
+
+@csrf_exempt
+def register_send_token(request):
+    if request.method == 'POST':
+        email = request.POST['email']
+        role = request.POST['role_choices']
+        # See how to generate email to log file
+        unique_token = str(uuid.uuid3(uuid.NAMESPACE_DNS, email))
+        print ("http://localhost:8000/app/registration?token=" + unique_token)
+        register_token_instance = InitialTokenRegistration.create(unique_token, email, role)
+        return render(request, 'register_send_token/index.html')
+    else:
+        return render(request, 'register_send_token/index.html')
 
 def browse_items(request):
     # get all data of medicines
@@ -57,7 +97,6 @@ def browse_to_be_loaded(request):
 		orderId = request.POST['orderId']
 		Order.loaded_into_drone(orderId)
 		return HttpResponse('test')
-
 	else:
 		# rendering all orders with status QUEUED_FOR_DISPATCH
 		orders = Order.objects.filter(status=Order.STATUS_CHOICES[2][0]).order_by('-priority')
