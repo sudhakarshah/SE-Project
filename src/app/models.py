@@ -79,21 +79,24 @@ class Order(models.Model):
 		('QUEUED_FOR_DISPATCH', 'Queued for Dispatch'),
 		('DISPATCHED', 'Dispatched')
 	)
+	HIGH_STATUS = '3'
+	MEDIUM_STATUS = '2'
+	LOW_STATUS = '1'
 	PRIORITY_CHOICES = (
-		('HIGH', 'High'),
-		('MEDIUM', 'Medium'),
-		('LOW', 'Low')
+		(HIGH_STATUS , 'HIGH'),
+		(MEDIUM_STATUS, 'MEDIUM'),
+		(LOW_STATUS, 'LOW')
 	)
 	status = models.CharField(max_length=200,choices=STATUS_CHOICES,default='QUEUED_FOR_PROCESSING')
 	ordering_clinic = models.ForeignKey(ClinicLocation, on_delete=models.CASCADE, null=True)
 	supplying_hospital = models.ForeignKey(HospitalLocation, on_delete=models.CASCADE, null=True)
-	priority = models.CharField(max_length=200,choices=PRIORITY_CHOICES,default='MEDIUM')
+	priority = models.CharField(max_length=200, choices=PRIORITY_CHOICES,default=MEDIUM_STATUS)
 	date_order_placed = models.DateTimeField(default=timezone.now, blank=True)
 	date_order_dispatched = models.DateTimeField(blank=True, null=True)
 	date_order_delivered = models.DateTimeField(blank=True, null=True)
 	items = models.ManyToManyField(Item, through='OrderedItem')
 
-	def create_order(totalWeight, orderingClinic, supplyingHospital, priority='MEDIUM'):
+	def create_order(totalWeight, orderingClinic, supplyingHospital, priority=MEDIUM_STATUS):
 		order = Order()
 		order.total_weight = totalWeight
 		order.ordering_clinic = orderingClinic
