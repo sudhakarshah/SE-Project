@@ -72,7 +72,11 @@
 						event: 'DOWNLOAD_SHIPPING_LABEL',
 					},
 					success: (result) => {
-						alert("Downloading");
+						var blob=new Blob([result]);
+						var link=document.createElement('a');
+						link.href=window.URL.createObjectURL(blob);
+						link.download="shipping_label_" + id + ".pdf";
+						link.click();
 					}
 				});
 			});

@@ -1,5 +1,6 @@
 import json
 import io
+from io import BytesIO
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from reportlab.pdfgen import canvas
@@ -77,20 +78,28 @@ def browse_to_be_processed(request):
 		elif event == 'COMPLETE_PROCESSING': 
 			Order.complete_processing(orderId)
 		elif event == 'DOWNLOAD_SHIPPING_LABEL':
-			# Create the HttpResponse object with the appropriate PDF headers.
+			order = Order.objects.get(pk=orderId)
+
 			response = HttpResponse(content_type='application/pdf')
-			response['Content-Disposition'] = 'attachment; filename="somefilename.pdf"'
+			response['Content-Disposition'] = 'inline; filename="mypdf.pdf"'
 
-			# Create the PDF object, using the response object as its "file."
-			p = canvas.Canvas(response)
+			buffer = BytesIO()
+			p = canvas.Canvas(buffer)
+			p.drawString(100, 700, 'Order Number: ' + orderId)
+			p.drawString(100, 650, 'Order Content: ')
+			height = 625
+			for item in order.items.all():
+				height = height - 25
+				p.drawString(150, height, item.name)
+			p.drawString(100, height - 50 , 'Order destination: ' + order.supplying_hospital.name)
 
-			# Draw things on the PDF. Here's where the PDF generation happens.
-			# See the ReportLab documentation for the full list of functionality.
-			p.drawString(100, 100, "Hello world.")
-
-			# Close the PDF object cleanly, and we're done.
 			p.showPage()
 			p.save()
+
+			pdf = buffer.getvalue()
+			buffer.close()
+			response.write(pdf)
+			
 			return response
 
 		return HttpResponse('test')
