@@ -1,0 +1,82 @@
+<HTML>
+	<head>
+			<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+			<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+	</head>
+  <BODY>
+		{% include 'browse_orders_warehouse/js.html' %}
+		{% include 'browse_orders_warehouse/css.html' %}
+		<h2>Order Which Processing Not Yet Begun</h2>
+		<br/>
+		<table class="table">
+			<thead class="thead-dark">
+				<tr>
+					<th scope="col">ID</th>
+					<th scope="col">Required Supplies</th>
+					<th scope="col">Total Weight</th>
+					<th scope="col">From Location</th>
+					<th scope="col">To Location</th>
+					<th scope="col">Priority</th>
+					<th scope="col">Order status</th>
+					<th scope="col">Date</th>
+					<th scope="col">Action</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for order in process_order_list %}
+					<tr>
+						<td>{{ order.id }}</td>
+						<td>{% for item in order.items.all %}{{ item.name }}<br/>{% endfor %}</td>
+						<td>{{ order.total_weight }} kg</td>
+						<td>{{ order.supplying_hospital.name }}</td>
+						<td>{{ order.ordering_clinic.name }}</td>
+						<td>{{ order.priority }}</td>
+						<td>{{ order.status }}</td>
+						<td>{{ order.date_order_placed }}</td>
+						<td><input class="readyProcessButton btn btn-success" type="submit" value="Ready To Process" data-order-id='{{ order.id }}'/></td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+
+		<br/>
+		<br/>
+
+		<h2>Order Which Picking And Packing Started</h2>
+		<br/>
+		<table class="table">
+			<thead class="thead-dark">
+				<tr>
+					<th scope="col">ID</th>
+					<th scope="col">Required Supplies</th>
+					<th scope="col">Total Weight</th>
+					<th scope="col">From Location</th>
+					<th scope="col">To Location</th>
+					<th scope="col">Priority</th>
+					<th scope="col">Order status</th>
+					<th scope="col">Date</th>
+					<th scope="col">Action</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for order in pack_order_list %}
+					<tr>
+						<td>{{ order.id }}</td>
+						<td>{% for item in order.items.all %}{{ item.name }}<br/>{% endfor %}</td>
+						<td>{{ order.total_weight }} kg</td>
+						<td>{{ order.supplying_hospital.name }}</td>
+						<td>{{ order.ordering_clinic.name }}</td>
+						<td>{{ order.priority }}</td>
+						<td>{{ order.status }}</td>
+						<td>{{ order.date_order_placed }}</td>
+						<td>
+							<input class="downloadButton btn btn-primary" type="submit" value="Download Shipping Label" data-order-id='{{ order.id }}'/>
+							<input class="completeProcessButton btn btn-warning" type="submit" value="Complete Processing" data-order-id='{{ order.id }}'/>
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+
+  </BODY>
+</HTML>
