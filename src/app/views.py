@@ -70,11 +70,11 @@ def register_send_token(request):
 def browse_items(request):
     # get all data of medicines
     if request.method == 'POST':
-        print("post request")
         orders = request.POST.getlist('order[]')
         totalWeight = request.POST['totalWeight']
+        priority = request.POST['priority']
         # creating an order object
-        order = Order.create_order(totalWeight, ClinicLocation.objects.get(id=1), HospitalLocation.objects.get(id=1))
+        order = Order.create_order(totalWeight, ClinicLocation.objects.get(id=1), HospitalLocation.objects.get(id=1), priority)
 
         for item in orders:
             item = json.loads(item)

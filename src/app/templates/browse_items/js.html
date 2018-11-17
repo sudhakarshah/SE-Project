@@ -160,12 +160,14 @@
 			$.each(cart, (i) => {
 				orderData.push(JSON.stringify(cart[i]));
 			});
+			select_data = $('#priority_select').val();
 			$.ajax({
 				type: 'POST',
 				url: '/app/items/',
 				traditional: true,
 						dataType: 'html',
 				data: {
+					priority: select_data,
 					totalWeight: currentWeight,
 					'order[]': orderData
 				},
