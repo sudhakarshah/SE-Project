@@ -26,17 +26,16 @@
 
 		$(".submitButton").click((evt) => {
 			let id = parseInt($(evt.target).attr('data-order-id'));
-
 			$.ajax({
 				type: 'POST',
-				url: '/app/OrdersToBeLoaded/',
+				url: '/app/ConfirmOrderDelivery/',
 				traditional: true,
 				dataType: 'html',
 				data: {
 					orderId: id
 				},
 				success: (result) => {
-					alert("Loaded Into Drone");
+					alert("Confirmed Delivery");
 					location.reload();
 				}
 			});

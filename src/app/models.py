@@ -104,7 +104,8 @@ class Order(models.Model):
 		('QUEUED_FOR_PROCESSING', 'Queued for Processing'),
 		('PROCESSING_BY_WAREHOUSE', 'Processing by Warehouse'),
 		('QUEUED_FOR_DISPATCH', 'Queued for Dispatch'),
-		('DISPATCHED', 'Dispatched')
+		('DISPATCHED', 'Dispatched'),
+		('DELIVERED', 'Delivered')
 	)
 	HIGH_STATUS = '3'
 	MEDIUM_STATUS = '2'
@@ -146,6 +147,11 @@ class Order(models.Model):
 	def complete_processing(id):
 		order = Order.objects.get(id=id)
 		order.status = Order.STATUS_CHOICES[2][0]
+		order.save()
+
+	def confirm_order_delivery(id):
+		order = Order.objects.get(id=id)
+		order.status = Order.STATUS_CHOICES[4][0]
 		order.save()
 
 class OrderedItem(models.Model):

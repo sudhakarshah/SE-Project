@@ -151,3 +151,15 @@ def browse_to_be_processed(request):
 			'pack_order_list': packOrders,
 		}
 		return render(request, 'browse_orders_warehouse/index.html', context)
+
+def browse_orders(request):
+	if request.method == 'POST':
+		orderId = request.POST['orderId']
+		Order.confirm_order_delivery(orderId)
+		return HttpResponse('test')
+	else:
+		orders = Order.objects.filter(status=Order.STATUS_CHOICES[3][0]).order_by('-priority')
+		context = {
+			'order_list': orders,
+		}
+		return render(request, 'browse_orders/index.html', context)
