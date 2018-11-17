@@ -123,7 +123,7 @@ class Order(models.Model):
 	date_order_delivered = models.DateTimeField(blank=True, null=True)
 	items = models.ManyToManyField(Item, through='OrderedItem')
 
-	def create_order(totalWeight, orderingClinic, supplyingHospital, priority=MEDIUM_STATUS):
+	def create_order(totalWeight, orderingClinic, supplyingHospital, priority):
 		order = Order()
 		order.total_weight = totalWeight
 		order.ordering_clinic = orderingClinic
