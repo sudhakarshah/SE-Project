@@ -23,7 +23,7 @@ class Item(models.Model):
 
 class HospitalLocation(models.Model):
 	name = models.CharField(max_length=200)
-	latitute =  models.DecimalField(max_digits=9, decimal_places=6)
+	latitute = models.DecimalField(max_digits=9, decimal_places=6)
 	longitute = models.DecimalField(max_digits=9, decimal_places=6)
 	altitude = models.DecimalField(max_digits=9, decimal_places=6)
 

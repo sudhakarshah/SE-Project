@@ -11,19 +11,26 @@ from django.views.decorators.csrf import csrf_exempt
 
 from .models import *
 
+
 @csrf_exempt
 def index(request):
     if request.method == 'POST':
+        profile_data = {}
         username = request.POST['username']
         password = request.POST['password']
         user = authenticate(username=username, password=password)
         if user is not None:
             # Authenticated
-            return HttpResponse("Success")
+            profile = Profile.objects.get(user=user)
+            profile_data['role'] = profile.role
+            profile_data['status'] = "Success"
+            return HttpResponse(json.dumps(profile_data), content_type="application/json")
         else:
-            return HttpResponse("Fail")
+            profile_data['status'] = "Fail"
+            return HttpResponse(json.dumps(profile_data), content_type="application/json")
     else:
         return render(request, 'signin/index.html')
+
 
 @csrf_exempt
 def register_details(request):
@@ -37,7 +44,8 @@ def register_details(request):
             clinicName = request.POST['clinicName']
         username = request.POST['username']
         password = request.POST['password']
-        register_user_instance = Profile.create_profile(firstName, lastName, email, role, clinicName, username, password)
+        register_user_instance = Profile.create_profile(firstName, lastName, email, role, clinicName, username,
+                                                        password)
         return HttpResponse("Success")
     else:
         token_id = request.GET['token']
@@ -54,6 +62,7 @@ def register_details(request):
         }
         return render(request, 'register_with_details/index.html', context)
 
+
 @csrf_exempt
 def register_send_token(request):
     if request.method == 'POST':
@@ -61,11 +70,12 @@ def register_send_token(request):
         role = request.POST['role_choices']
         # See how to generate email to log file
         unique_token = str(uuid.uuid3(uuid.NAMESPACE_DNS, email))
-        print ("http://localhost:8000/app/registration?token=" + unique_token)
+        print("http://localhost:8000/app/registration?token=" + unique_token)
         register_token_instance = InitialTokenRegistration.create(unique_token, email, role)
         return render(request, 'register_send_token/index.html')
     else:
         return render(request, 'register_send_token/index.html')
+
 
 def browse_items(request):
     # get all data of medicines
@@ -74,7 +84,8 @@ def browse_items(request):
         totalWeight = request.POST['totalWeight']
         priority = request.POST['priority']
         # creating an order object
-        order = Order.create_order(totalWeight, ClinicLocation.objects.get(id=1), HospitalLocation.objects.get(id=1), priority)
+        order = Order.create_order(totalWeight, ClinicLocation.objects.get(id=1), HospitalLocation.objects.get(id=1),
+                                   priority)
 
         for item in orders:
             item = json.loads(item)
@@ -91,75 +102,77 @@ def browse_items(request):
         }
         return render(request, 'browse_items/index.html', context)
 
+
 def browse_to_be_loaded(request):
-	# updating order status to dispatched
-	if request.method == 'POST':
-		orderId = request.POST['orderId']
-		Order.loaded_into_drone(orderId)
-		return HttpResponse('test')
-	else:
-		# rendering all orders with status QUEUED_FOR_DISPATCH
-		orders = Order.objects.filter(status=Order.STATUS_CHOICES[2][0]).order_by('-priority')
-		context = {
-			'order_list': orders,
-		}
-		return render(request, 'browse_to_be_loaded/index.html', context)
+    # updating order status to dispatched
+    if request.method == 'POST':
+        orderId = request.POST['orderId']
+        Order.loaded_into_drone(orderId)
+        return HttpResponse('test')
+    else:
+        # rendering all orders with status QUEUED_FOR_DISPATCH
+        orders = Order.objects.filter(status=Order.STATUS_CHOICES[2][0]).order_by('-priority')
+        context = {
+            'order_list': orders,
+        }
+        return render(request, 'browse_to_be_loaded/index.html', context)
+
 
 def browse_to_be_processed(request):
+    if request.method == 'POST':
 
-	if request.method == 'POST':
+        event = request.POST['event']
+        orderId = request.POST['orderId']
 
-		event = request.POST['event']
-		orderId = request.POST['orderId']
+        if event == 'READY_TO_PROCESS':
+            Order.ready_to_process(orderId)
+        elif event == 'COMPLETE_PROCESSING':
+            Order.complete_processing(orderId)
+        elif event == 'DOWNLOAD_SHIPPING_LABEL':
+            order = Order.objects.get(pk=orderId)
 
-		if event == 'READY_TO_PROCESS':
-			Order.ready_to_process(orderId)
-		elif event == 'COMPLETE_PROCESSING': 
-			Order.complete_processing(orderId)
-		elif event == 'DOWNLOAD_SHIPPING_LABEL':
-			order = Order.objects.get(pk=orderId)
+            response = HttpResponse(content_type='application/pdf')
+            response['Content-Disposition'] = 'inline; filename="mypdf.pdf"'
 
-			response = HttpResponse(content_type='application/pdf')
-			response['Content-Disposition'] = 'inline; filename="mypdf.pdf"'
+            buffer = BytesIO()
+            p = canvas.Canvas(buffer)
+            p.drawString(100, 700, 'Order Number: ' + orderId)
+            p.drawString(100, 650, 'Order Content: ')
+            height = 625
+            for item in order.items.all():
+                height = height - 25
+                p.drawString(150, height, item.name)
+            p.drawString(100, height - 50, 'Order destination: ' + order.supplying_hospital.name)
 
-			buffer = BytesIO()
-			p = canvas.Canvas(buffer)
-			p.drawString(100, 700, 'Order Number: ' + orderId)
-			p.drawString(100, 650, 'Order Content: ')
-			height = 625
-			for item in order.items.all():
-				height = height - 25
-				p.drawString(150, height, item.name)
-			p.drawString(100, height - 50 , 'Order destination: ' + order.supplying_hospital.name)
+            p.showPage()
+            p.save()
 
-			p.showPage()
-			p.save()
+            pdf = buffer.getvalue()
+            buffer.close()
+            response.write(pdf)
 
-			pdf = buffer.getvalue()
-			buffer.close()
-			response.write(pdf)
-			
-			return response
+            return response
 
-		return HttpResponse('test')
+        return HttpResponse('test')
 
-	else:
-		processOrders = Order.objects.filter(status=Order.STATUS_CHOICES[0][0]).order_by('-priority')
-		packOrders = Order.objects.filter(status=Order.STATUS_CHOICES[1][0]).order_by('-priority')
-		context = {
-			'process_order_list': processOrders,
-			'pack_order_list': packOrders,
-		}
-		return render(request, 'browse_orders_warehouse/index.html', context)
+    else:
+        processOrders = Order.objects.filter(status=Order.STATUS_CHOICES[0][0]).order_by('-priority')
+        packOrders = Order.objects.filter(status=Order.STATUS_CHOICES[1][0]).order_by('-priority')
+        context = {
+            'process_order_list': processOrders,
+            'pack_order_list': packOrders,
+        }
+        return render(request, 'browse_orders_warehouse/index.html', context)
+
 
 def browse_orders(request):
-	if request.method == 'POST':
-		orderId = request.POST['orderId']
-		Order.confirm_order_delivery(orderId)
-		return HttpResponse('test')
-	else:
-		orders = Order.objects.filter(status=Order.STATUS_CHOICES[3][0]).order_by('-priority')
-		context = {
-			'order_list': orders,
-		}
-		return render(request, 'browse_orders/index.html', context)
+    if request.method == 'POST':
+        orderId = request.POST['orderId']
+        Order.confirm_order_delivery(orderId)
+        return HttpResponse('test')
+    else:
+        orders = Order.objects.filter(status=Order.STATUS_CHOICES[3][0]).order_by('-priority')
+        context = {
+            'order_list': orders,
+        }
+        return render(request, 'browse_orders/index.html', context)
