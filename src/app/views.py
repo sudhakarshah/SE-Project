@@ -2,6 +2,8 @@ import json
 import io
 from io import BytesIO
 import uuid
+
+from django.template import loader
 from reportlab.pdfgen import canvas
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
@@ -120,7 +122,6 @@ def browse_to_be_loaded(request):
 
 def browse_to_be_processed(request):
     if request.method == 'POST':
-
         event = request.POST['event']
         orderId = request.POST['orderId']
 
@@ -130,10 +131,8 @@ def browse_to_be_processed(request):
             Order.complete_processing(orderId)
         elif event == 'DOWNLOAD_SHIPPING_LABEL':
             order = Order.objects.get(pk=orderId)
-
             response = HttpResponse(content_type='application/pdf')
             response['Content-Disposition'] = 'inline; filename="mypdf.pdf"'
-
             buffer = BytesIO()
             p = canvas.Canvas(buffer)
             p.drawString(100, 700, 'Order Number: ' + orderId)
@@ -143,16 +142,12 @@ def browse_to_be_processed(request):
                 height = height - 25
                 p.drawString(150, height, item.name)
             p.drawString(100, height - 50, 'Order destination: ' + order.supplying_hospital.name)
-
             p.showPage()
             p.save()
-
             pdf = buffer.getvalue()
             buffer.close()
             response.write(pdf)
-
             return response
-
         return HttpResponse('test')
 
     else:
@@ -164,7 +159,7 @@ def browse_to_be_processed(request):
         }
         return render(request, 'browse_orders_warehouse/index.html', context)
 
-
+@csrf_exempt
 def browse_orders(request):
     if request.method == 'POST':
         orderId = request.POST['orderId']
@@ -172,7 +167,9 @@ def browse_orders(request):
         return HttpResponse('test')
     else:
         orders = Order.objects.filter(status=Order.STATUS_CHOICES[3][0]).order_by('-priority')
+        template = loader.get_template('browse_orders/index.html')
         context = {
             'order_list': orders,
         }
-        return render(request, 'browse_orders/index.html', context)
+        print("done")
+        return HttpResponse(template.render(context, request))

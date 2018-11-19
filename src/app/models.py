@@ -97,6 +97,15 @@ class Profile(models.Model):
 	def __str__(self):
 		return self.first_name
 
+class Shipment(models.Model):
+	date_order_dispatched = models.DateTimeField(blank=True, null=True)
+	date_order_delivered = models.DateTimeField(blank=True, null=True)
+
+	def create_shipment(self):
+		shipment = Shipment()
+		shipment.date_order_dispatched = timezone.now()
+		shipment.save()
+		return shipment
 
 class Order(models.Model):
 	total_weight = models.DecimalField(max_digits=5, decimal_places=2)
@@ -123,6 +132,7 @@ class Order(models.Model):
 	date_order_dispatched = models.DateTimeField(blank=True, null=True)
 	date_order_delivered = models.DateTimeField(blank=True, null=True)
 	items = models.ManyToManyField(Item, through='OrderedItem')
+	shipment = models.ForeignKey(Shipment, on_delete=models.CASCADE, null=True)
 
 	def create_order(totalWeight, orderingClinic, supplyingHospital, priority):
 		order = Order()
@@ -132,12 +142,6 @@ class Order(models.Model):
 		order.priority = priority
 		order.save()
 		return order
-
-	def loaded_into_drone(id):
-		order = Order.objects.get(id=id)
-		order.status = Order.STATUS_CHOICES[3][0]
-		order.date_order_dispatched = timezone.now()
-		order.save()
 
 	def ready_to_process(id):
 		order = Order.objects.get(id=id)
@@ -149,9 +153,17 @@ class Order(models.Model):
 		order.status = Order.STATUS_CHOICES[2][0]
 		order.save()
 
+	def loaded_into_drone(id, shipment_id):
+		order = Order.objects.get(id=id)
+		order.status = Order.STATUS_CHOICES[3][0]
+		order.date_order_dispatched = timezone.now()
+		order.shipment = shipment_id
+		order.save()
+
 	def confirm_order_delivery(id):
 		order = Order.objects.get(id=id)
 		order.status = Order.STATUS_CHOICES[4][0]
+		order.date_order_delivered = timezone.now()
 		order.save()
 
 class OrderedItem(models.Model):

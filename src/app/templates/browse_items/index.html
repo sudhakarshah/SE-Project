@@ -6,7 +6,10 @@
   <BODY>
 		{% include 'browse_items/js.html' %}
 		{% include 'browse_items/css.html' %}
-	<h2>Browse Items And Select</h2>
+	<div id = "heading">
+		<h2 id="mainHeading">Browse Items And Select</h2>
+		<button id="viewOrdersButton" type="button" name="viewOrders" class="btn btn-primary"> View Dispatched Orders </button>
+	</div>
 	<br/>
 	<table class="table">
 		<thead class="thead-dark">
@@ -57,7 +60,6 @@
 		<br/>
 		<input id="submitButton" type="submit" value="Submit" class="btn btn-success" />
 	</div>
-
 	<p id="warning" class="hide p-3 mb-2 bg-danger text-white">Your weight exceeds the Maximum loading capacity of the drone</p>
 
   </BODY>

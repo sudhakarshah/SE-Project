@@ -178,5 +178,17 @@
 			});
 		});
 
+		$("#viewOrdersButton").click((evt) => {
+			$.ajax({
+				type: 'GET',
+				url: '/app/ConfirmOrderDelivery/',
+				traditional: true,
+				success: (result) => {
+				    console.log(result);
+					// location.reload();
+				}
+			});
+		});
+
 	});
 </script>
