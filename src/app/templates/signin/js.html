@@ -26,7 +26,6 @@
 		 });
 
 		$("#registerPage").click((evt) => {
-
 			$.ajax({
 				type: 'GET',
 				url: '/app/registerSendToken',
@@ -39,14 +38,20 @@
 				type: 'POST',
 				url: '/app/',
 				traditional: true,
-				dataType: 'html',
+				dataType: 'json',
 				data: {
 				    username: $('#username').val(),
 					password: $('#password').val(),
 				},
 				success: (result) => {
-					if (result == "Success")
-					    window.location.replace("http://localhost:8000/app/items");
+					if (result.status == "Success") {
+					    if (result.role == "CLINIC_MANAGER")
+					        window.location.replace("http://localhost:8000/app/items");
+					    else if (result.role == "WAREHOUSE_PERSONNEL")
+					        window.location.replace("http://localhost:8000/app/OrdersToBeProcessed");
+					    else if (result.role == "DISPATCHER")
+					        window.location.replace("http://localhost:8000/app/OrdersToBeLoaded");
+					}
 					else {
 					    alert("Login Unsuccessful");
 					    location.reload();
