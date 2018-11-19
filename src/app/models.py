@@ -100,6 +100,7 @@ class Profile(models.Model):
 class Shipment(models.Model):
 	date_order_dispatched = models.DateTimeField(blank=True, null=True)
 	date_order_delivered = models.DateTimeField(blank=True, null=True)
+	csv_file_location = models.CharField(max_length=200, null=True)
 
 	def create_shipment(self):
 		shipment = Shipment()

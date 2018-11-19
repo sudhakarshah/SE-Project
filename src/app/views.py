@@ -26,6 +26,10 @@ def index(request):
             profile = Profile.objects.get(user=user)
             profile_data['role'] = profile.role
             profile_data['status'] = "Success"
+            # Saving the appropriate session
+            request.session['role'] = profile.role
+            if (profile.role == "CLINIC_MANAGER"):
+                request.session['clinicName'] = ClinicLocation.objects.get(id=profile.clinic_location.id).name
             return HttpResponse(json.dumps(profile_data), content_type="application/json")
         else:
             profile_data['status'] = "Fail"
@@ -86,7 +90,7 @@ def browse_items(request):
         totalWeight = request.POST['totalWeight']
         priority = request.POST['priority']
         # creating an order object
-        order = Order.create_order(totalWeight, ClinicLocation.objects.get(id=1), HospitalLocation.objects.get(id=1),
+        order = Order.create_order(totalWeight, ClinicLocation.objects.get(name=request.session['clinicName']), HospitalLocation.objects.get(id=1),
                                    priority)
 
         for item in orders:
@@ -109,7 +113,8 @@ def browse_to_be_loaded(request):
     # updating order status to dispatched
     if request.method == 'POST':
         orderId = request.POST['orderId']
-        Order.loaded_into_drone(orderId)
+        shipment = Shipment.create_shipment(Shipment)
+        Order.loaded_into_drone(orderId, shipment)
         return HttpResponse('test')
     else:
         # rendering all orders with status QUEUED_FOR_DISPATCH
@@ -166,10 +171,9 @@ def browse_orders(request):
         Order.confirm_order_delivery(orderId)
         return HttpResponse('test')
     else:
-        orders = Order.objects.filter(status=Order.STATUS_CHOICES[3][0]).order_by('-priority')
+        orders = Order.objects.filter(status=Order.STATUS_CHOICES[3][0], ordering_clinic=ClinicLocation.objects.get(name = request.session['clinicName'])).order_by('-priority')
         template = loader.get_template('browse_orders/index.html')
         context = {
             'order_list': orders,
         }
-        print("done")
         return HttpResponse(template.render(context, request))
