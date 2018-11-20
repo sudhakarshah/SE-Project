@@ -2,6 +2,36 @@
 
 	$(document).ready(() => {
 
+		var max_weight = 23.8;
+		var total_weight = 0;
+		var cart = [];
+
+		$('input:checkbox').click(function(evt) {
+			if ($(this).is(":checked")) {
+				addOrder($(this).attr('id'), parseFloat($(this).attr('data-weight')));
+			} else {
+				deleteOrder($(this).attr('id'), parseFloat($(this).attr('data-weight')));
+			}
+		});
+
+		function addOrder(id, weight) {
+			if(total_weight + weight > max_weight){
+				alert('Exceed Maximum weight!');
+				$('#' + id).attr('checked', false);
+			}else{
+				cart.push(id);
+				total_weight = total_weight + weight;
+				return true;
+			}
+		}
+
+		function deleteOrder(delete_id, weight){
+			total_weight = total_weight - weight;
+			cart = cart.filter(function(id) {
+    			return id !== delete_id;
+			});
+		}
+
 		$.ajaxSetup({
 			beforeSend: (xhr, settings) => {
 				function getCookie(name) {
@@ -38,6 +68,22 @@
 				success: (result) => {
 					alert("Loaded Into Drone");
 					location.reload();
+				}
+			});
+		});
+
+		$("#viewShippmentButton").click((evt) => {
+
+			$.ajax({
+				type: 'POST',
+				url: '/app/',
+				traditional: true,
+				dataType: 'html',
+				data: {
+					orderIds: cart
+				},
+				success: (result) => {
+					alert("Downloading");
 				}
 			});
 		});
