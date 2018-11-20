@@ -103,11 +103,13 @@ def browse_items(request):
         return HttpResponse(orders)
 
     else:
+        clinicName = request.session['clinicName']
         items = Item.objects.all()
         Categories = Category.objects.all()
         context = {
             'item_list': items,
             'category_list': Categories,
+            'clinic_name': clinicName
         }
         return render(request, 'browse_items/index.html', context)
 
