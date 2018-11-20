@@ -112,9 +112,9 @@ def browse_items(request):
 def browse_to_be_loaded(request):
     # updating order status to dispatched
     if request.method == 'POST':
-        orderId = request.POST['orderId']
+        orderIds = request.POST.getlist('orderIds[]')
         shipment = Shipment.create_shipment(Shipment)
-        Order.loaded_into_drone(orderId, shipment)
+        Order.loaded_into_drone(orderIds, shipment)
         return HttpResponse('test')
     else:
         # rendering all orders with status QUEUED_FOR_DISPATCH

@@ -154,12 +154,13 @@ class Order(models.Model):
 		order.status = Order.STATUS_CHOICES[2][0]
 		order.save()
 
-	def loaded_into_drone(id, shipment_id):
-		order = Order.objects.get(id=id)
-		order.status = Order.STATUS_CHOICES[3][0]
-		order.date_order_dispatched = timezone.now()
-		order.shipment = shipment_id
-		order.save()
+	def loaded_into_drone(ids, shipment_id):
+		for orderId in ids:
+			order = Order.objects.get(id=orderId)
+			order.status = Order.STATUS_CHOICES[3][0]
+			order.date_order_dispatched = timezone.now()
+			order.shipment = shipment_id
+			order.save()
 
 	def confirm_order_delivery(id):
 		order = Order.objects.get(id=id)
