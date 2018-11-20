@@ -68,25 +68,30 @@
 				traditional: true,
 				dataType: 'html',
 				data: {
-					'orderIds[]': cart
+					'orderIds[]': cart,
+					event: 'LOAD_INTO_DRONE'
 				},
 				success: (result) => {
-				    console.log(result);
 					alert("Loaded Into Drone");
-					location.reload();
+					$('#buttonDiv').removeClass('hide');
+					$('#buttonDiv').addClass('show');
+					$('#shippment-id').html(result);
 				}
 			});
 		});
 
 		$("#viewShippmentButton").click((evt) => {
 
+			let id = $('#shippment-id').html();
+
 			$.ajax({
 				type: 'POST',
-				url: '/app/',
+				url: '/app/OrdersToBeLoaded/',
 				traditional: true,
 				dataType: 'html',
 				data: {
-					orderIds: cart
+					shippmentId: id,
+					event: 'DOWNLOAD',
 				},
 				success: (result) => {
 					alert("Downloading");

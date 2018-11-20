@@ -10,7 +10,6 @@
 		<div id="header">
 			<h2 id="mainHeading" >Order To Be loaded Onto Drone</h2>
 			<input class="submitButton btn btn-primary" type="submit" value="Select Orders" data-order-id='{{ order.id }}'/>
-			<button id="viewShippmentButton" type="button" class="btn btn-warning">Download Shipment</button>
 		</div>
 		<br/>
 		<table class="table">
@@ -50,5 +49,12 @@
 			Current weight =
 			<span id="weight-show">0</span> kg
 		</p>
+
+		<br/>
+		<br/>
+		<div id="buttonDiv" class="hide">
+			<h5>Shippment Id -> <span id="shippment-id"></span></h5>
+			<button id="viewShippmentButton" type="button" class="btn btn-warning">Download Shipment</button>
+		</div>
   </BODY>
 </HTML>
