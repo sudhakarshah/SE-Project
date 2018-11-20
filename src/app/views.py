@@ -147,7 +147,7 @@ def browse_to_be_loaded(request):
             writer = csv.writer(writeFile)
             writer.writerows(lines_to_be_printed_in_csv)
         writeFile.close()
-        return HttpResponse('test')
+        return HttpResponse(shipment.id)
     else:
         # rendering all orders with status QUEUED_FOR_DISPATCH
         orders = Order.objects.filter(status=Order.STATUS_CHOICES[2][0]).order_by('-priority')
