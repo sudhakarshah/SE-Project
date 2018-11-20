@@ -4,6 +4,7 @@ import io
 from io import BytesIO
 import uuid
 
+import simplejson as simplejson
 from django.template import loader
 from reportlab.pdfgen import canvas
 from django.shortcuts import render, redirect
@@ -91,7 +92,8 @@ def browse_items(request):
         totalWeight = request.POST['totalWeight']
         priority = request.POST['priority']
         # creating an order object
-        order = Order.create_order(totalWeight, ClinicLocation.objects.get(name=request.session['clinicName']), HospitalLocation.objects.get(id=1),
+        order = Order.create_order(totalWeight, ClinicLocation.objects.get(name=request.session['clinicName']),
+                                   HospitalLocation.objects.get(id=1),
                                    priority)
 
         for item in orders:
@@ -113,50 +115,52 @@ def browse_items(request):
 def browse_to_be_loaded(request):
     # updating order status to dispatched
     if request.method == 'POST':
-		if request.POST['event'] == 'LOAD_INTO_DRONE':
-			order_ids = request.POST.getlist('orderIds[]')
-			shipment = Shipment.create_shipment(Shipment)
-			lines_to_be_printed_in_csv = []
-			clinics_to_be_added = []
-			# Updating all the orders in the shipment
-			for order_id in order_ids:
-				current_order = Order.objects.get(id=order_id)
-				if current_order.ordering_clinic.id not in clinics_to_be_added:
-					clinics_to_be_added.append(current_order.ordering_clinic.id)
-				Order.loaded_into_drone(order_id, shipment)
+        if request.POST['event'] == 'LOAD_INTO_DRONE':
+            order_ids = request.POST.getlist('orderIds[]')
+            shipment = Shipment.create_shipment(Shipment)
+            lines_to_be_printed_in_csv = []
+            clinics_to_be_added = []
+            # Updating all the orders in the shipment
+            for order_id in order_ids:
+                current_order = Order.objects.get(id=order_id)
+                if current_order.ordering_clinic.id not in clinics_to_be_added:
+                    clinics_to_be_added.append(current_order.ordering_clinic.id)
+                Order.loaded_into_drone(order_id, shipment)
 
-			# Checking the clinic where the shipment goes
-			for clinic_id in clinics_to_be_added:
-				ordering_clinic = ClinicLocation.objects.get(id=clinic_id)
-				location_of_clinic = []
-				location_of_clinic.append(ordering_clinic.latitute)
-				location_of_clinic.append(ordering_clinic.longitute)
-				location_of_clinic.append(ordering_clinic.altitude)
-				lines_to_be_printed_in_csv.append(location_of_clinic)
+            # Checking the clinic where the shipment goes
+            for clinic_id in clinics_to_be_added:
+                ordering_clinic = ClinicLocation.objects.get(id=clinic_id)
+                location_of_clinic = []
+                location_of_clinic.append(ordering_clinic.latitute)
+                location_of_clinic.append(ordering_clinic.longitute)
+                location_of_clinic.append(ordering_clinic.altitude)
+                lines_to_be_printed_in_csv.append(location_of_clinic)
 
-			#Creating CSV file and updating location
-			csv_file_name = 'shipment' + str(shipment.id) + '.csv'
-			shipment.update_file_location(csv_file_name)
-			# Adding the hospital as the last stop
-			location_of_hospital = []
-			location_of_hospital.append(HospitalLocation.objects.get(id=1).latitute)
-			location_of_hospital.append(HospitalLocation.objects.get(id=1).longitute)
-			location_of_hospital.append(HospitalLocation.objects.get(id=1).altitude)
-			lines_to_be_printed_in_csv.append(location_of_hospital)
-			# Writing to the CSV file
-			with open(csv_file_name, 'w') as writeFile:
-				writer = csv.writer(writeFile)
-				writer.writerows(lines_to_be_printed_in_csv)
-			writeFile.close()
-			return HttpResponse(shipment.id)
-		else if request.POST['event'] == 'DOWNLOAD':
-			shippmentId = request.POST['shippmentId']
-			
-			response = HttpResponse(content_type='text/csv')
-    		response['Content-Disposition'] = 'attachment; filename="somefilename.csv"'
-
-
-			return response
+            # Creating CSV file and updating location
+            csv_file_name = 'shipment' + str(shipment.id) + '.csv'
+            shipment.update_file_location(csv_file_name)
+            # Adding the hospital as the last stop
+            location_of_hospital = []
+            location_of_hospital.append(HospitalLocation.objects.get(id=1).latitute)
+            location_of_hospital.append(HospitalLocation.objects.get(id=1).longitute)
+            location_of_hospital.append(HospitalLocation.objects.get(id=1).altitude)
+            lines_to_be_printed_in_csv.append(location_of_hospital)
+            # Writing to the CSV file
+            with open(csv_file_name, 'w') as writeFile:
+                writer = csv.writer(writeFile)
+                writer.writerows(lines_to_be_printed_in_csv)
+            writeFile.close()
+            return HttpResponse(shipment.id)
+        elif (request.POST['event'] == 'DOWNLOAD'):
+            shipmentId = request.POST['shippmentId']
+            csv_file_name = 'shipment' + str(shipmentId) + '.csv'
+            with open(csv_file_name) as csvfile:
+                reader = csv.reader(csvfile)
+                data = [r for r in reader]
+            total_data = []
+            for row in data:
+                total_data.append(row)
+            return HttpResponse(simplejson.dumps(total_data))
     else:
         # rendering all orders with status QUEUED_FOR_DISPATCH
         orders = Order.objects.filter(status=Order.STATUS_CHOICES[2][0]).order_by('-priority')
@@ -205,6 +209,7 @@ def browse_to_be_processed(request):
         }
         return render(request, 'browse_orders_warehouse/index.html', context)
 
+
 @csrf_exempt
 def browse_orders(request):
     if request.method == 'POST':
@@ -212,7 +217,8 @@ def browse_orders(request):
         Order.confirm_order_delivery(orderId)
         return HttpResponse('test')
     else:
-        orders = Order.objects.filter(status=Order.STATUS_CHOICES[3][0], ordering_clinic=ClinicLocation.objects.get(name = request.session['clinicName'])).order_by('-priority')
+        orders = Order.objects.filter(status=Order.STATUS_CHOICES[3][0], ordering_clinic=ClinicLocation.objects.get(
+            name=request.session['clinicName'])).order_by('-priority')
         template = loader.get_template('browse_orders/index.html')
         context = {
             'order_list': orders,
