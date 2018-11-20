@@ -12,6 +12,7 @@
 			} else {
 				deleteOrder($(this).attr('id'), parseFloat($(this).attr('data-weight')));
 			}
+			updateWeightBox()
 		});
 
 		function addOrder(id, weight) {
@@ -30,6 +31,10 @@
 			cart = cart.filter(function(id) {
     			return id !== delete_id;
 			});
+		}
+
+		function updateWeightBox(){
+			$('#weight-show').html(total_weight.toFixed(2));
 		}
 
 		$.ajaxSetup({
