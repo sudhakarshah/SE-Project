@@ -9,6 +9,7 @@
 		{% include 'browse_to_be_loaded/css.html' %}
 		<div id="header">
 			<h2 id="mainHeading" >Order To Be loaded Onto Drone</h2>
+			<input class="submitButton btn btn-primary" type="submit" value="Loaded Into Drone" data-order-id='{{ order.id }}'/>
 			<button id="viewShippmentButton" type="button" class="btn btn-warning">Download Shippment</button>
 		</div>
 		<br/>
@@ -24,7 +25,6 @@
 					<th scope="col">Priority</th>
 					<th scope="col">Order status</th>
 					<th scope="col">Date</th>
-					<th scope="col">Action</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -39,7 +39,6 @@
 						<td>{{ order.get_priority_display }}</td>
 						<td>{{ order.status }}</td>
 						<td>{{ order.date_order_placed }}</td>
-						<td><input class="submitButton btn btn-primary" type="submit" value="Loaded Into Drone" data-order-id='{{ order.id }}'/></td>
 					</tr>
 				{% endfor %}
 			</tbody>
