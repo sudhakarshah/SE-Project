@@ -29,7 +29,7 @@ class HospitalLocation(models.Model):
 
 class ClinicLocation(models.Model):
 	name = models.CharField(max_length=200)
-	latitute =  models.DecimalField(max_digits=9, decimal_places=6)
+	latitute = models.DecimalField(max_digits=9, decimal_places=6)
 	longitute = models.DecimalField(max_digits=9, decimal_places=6)
 	altitude = models.DecimalField(max_digits=9, decimal_places=6)
 	supplying_hospital = models.ForeignKey(HospitalLocation, on_delete=models.CASCADE, null=True)
@@ -108,6 +108,10 @@ class Shipment(models.Model):
 		shipment.save()
 		return shipment
 
+	def update_file_location(self, file_location):
+		self.csv_file_location = file_location
+		self.save()
+
 class Order(models.Model):
 	total_weight = models.DecimalField(max_digits=5, decimal_places=2)
 	STATUS_CHOICES = (
@@ -154,13 +158,12 @@ class Order(models.Model):
 		order.status = Order.STATUS_CHOICES[2][0]
 		order.save()
 
-	def loaded_into_drone(ids, shipment_id):
-		for orderId in ids:
-			order = Order.objects.get(id=orderId)
-			order.status = Order.STATUS_CHOICES[3][0]
-			order.date_order_dispatched = timezone.now()
-			order.shipment = shipment_id
-			order.save()
+	def loaded_into_drone(id, shipment):
+		order = Order.objects.get(id=id)
+		order.status = Order.STATUS_CHOICES[3][0]
+		order.date_order_dispatched = timezone.now()
+		order.shipment = shipment
+		order.save()
 
 	def confirm_order_delivery(id):
 		order = Order.objects.get(id=id)
