@@ -1,3 +1,4 @@
+import csv
 import json
 import io
 from io import BytesIO
@@ -114,8 +115,34 @@ def browse_to_be_loaded(request):
     if request.method == 'POST':
         orderIds = request.POST.getlist('orderIds[]')
         shipment = Shipment.create_shipment(Shipment)
-        Order.loaded_into_drone(orderIds, shipment)
+        current_order = Order.objects.get(id=orderId)
+        ordering_clinic = ClinicLocation.objects.get(id=current_order.ordering_clinic.id)
+        # Order.loaded_into_drone(orderId, shipment)
+        lines = []
+        location = []
+        location.append(ordering_clinic.latitute)
+        location.append(ordering_clinic.longitute)
+        location.append(ordering_clinic.altitude)
+        lines.append(location)
+        csv_file_name = 'shipment' + str(shipment.id) + '.csv'
+        location = []
+        location.append(HospitalLocation.objects.get(id=1).latitute)
+        location.append(HospitalLocation.objects.get(id=1).longitute)
+        location.append(HospitalLocation.objects.get(id=1).altitude)
+        lines.append(location)
+        with open(csv_file_name, 'w') as writeFile:
+            writer = csv.writer(writeFile)
+            writer.writerows(lines)
+        writeFile.close()
         return HttpResponse('test')
+        # orders = request.POST.getlist['shipment[]']
+        # shipment = Shipment.create_shipment(Shipment)
+        #
+        # for order in orders:
+        #     current_order = Order.objects.get(id=order.id)
+        #     clinic = current_order.ordering_clinic
+        #     Order.loaded_into_drone(order.id, shipment)
+        # return HttpResponse('test')
     else:
         # rendering all orders with status QUEUED_FOR_DISPATCH
         orders = Order.objects.filter(status=Order.STATUS_CHOICES[2][0]).order_by('-priority')
