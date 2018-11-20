@@ -7,11 +7,15 @@
   <BODY>
 		{% include 'browse_to_be_loaded/js.html' %}
 		{% include 'browse_to_be_loaded/css.html' %}
-		<h2>Order To Be loaded Onto Drone</h2>
+		<div id="header">
+			<h2 id="mainHeading" >Order To Be loaded Onto Drone</h2>
+			<button id="viewShippmentButton" type="button" class="btn btn-warning">Download Shippment</button>
+		</div>
 		<br/>
 		<table class="table">
 			<thead class="thead-dark">
 				<tr>
+					<th scope="col"></th>
 					<th scope="col">ID</th>
 					<th scope="col">Required Supplies</th>
 					<th scope="col">Total Weight</th>
@@ -26,6 +30,7 @@
 			<tbody>
 				{% for order in order_list %}
 					<tr>
+						<td><input type="checkbox" id="{{ order.id }}" data-weight='{{ order.total_weight }}'/></td>
 						<td>{{ order.id }}</td>
 						<td>{% for item in order.items.all %}{{ item.name }}<br/>{% endfor %}</td>
 						<td>{{ order.total_weight }} kg</td>
