@@ -191,7 +191,7 @@ def browse_to_be_processed(request):
             for item in order.items.all():
                 height = height - 25
                 p.drawString(150, height, item.name)
-            p.drawString(100, height - 50, 'Order destination: ' + order.supplying_hospital.name)
+            p.drawString(100, height - 50, 'Order destination: ' + order.ordering_clinic.name)
             p.showPage()
             p.save()
             pdf = buffer.getvalue()
