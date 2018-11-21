@@ -5,17 +5,13 @@
 			<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 	</head>
   <BODY>
-		{% include 'browse_to_be_loaded/js.html' %}
-		{% include 'browse_to_be_loaded/css.html' %}
-		<div id="header">
-			<h2 id="mainHeading" >Order To Be loaded Onto Drone</h2>
-			<input class="submitButton btn btn-primary" type="submit" value="Select Orders" data-order-id='{{ order.id }}'/>
-		</div>
+		{% include 'browse_orders/js.html' %}
+		{% include 'browse_orders/css.html' %}
+		<h2>Order To Be Confirmed</h2>
 		<br/>
 		<table class="table">
 			<thead class="thead-dark">
 				<tr>
-					<th scope="col"></th>
 					<th scope="col">ID</th>
 					<th scope="col">Required Supplies</th>
 					<th scope="col">Total Weight</th>
@@ -24,12 +20,12 @@
 					<th scope="col">Priority</th>
 					<th scope="col">Order status</th>
 					<th scope="col">Date</th>
+					<th scope="col">Action</th>
 				</tr>
 			</thead>
 			<tbody>
 				{% for order in order_list %}
 					<tr>
-						<td><input type="checkbox" id="{{ order.id }}" data-weight='{{ order.total_weight }}'/></td>
 						<td>{{ order.id }}</td>
 						<td>{% for item in order.items.all %}{{ item.name }}<br/>{% endfor %}</td>
 						<td>{{ order.total_weight }} kg</td>
@@ -38,24 +34,10 @@
 						<td>{{ order.get_priority_display }}</td>
 						<td>{{ order.status }}</td>
 						<td>{{ order.date_order_placed }}</td>
+						<td><input class="submitButton btn btn-primary" type="submit" value="Delivered" data-order-id='{{ order.id }}'/></td>
 					</tr>
 				{% endfor %}
 			</tbody>
 		</table>
-		<p>
-			Maximum weight = 25.00 kg (1.20 kg for Drone)
-		</p>
-		<p>
-			Current weight =
-			<span id="weight-show">1.20</span> kg
-		</p>
-
-		<br/>
-		<br/>
-		<div id="buttonDiv" class="hide">
-			<h5>Shippment Id -> <span id="shippment-id"></span></h5>
-			<button id="viewShippmentButton" type="button" class="btn btn-warning">Download CSV</button>
-			<button id="loadButton" type="button" class="btn btn-primary">Load Into Drone</button>
-		</div>
   </BODY>
 </HTML>

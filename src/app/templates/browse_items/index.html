@@ -6,7 +6,11 @@
   <BODY>
 		{% include 'browse_items/js.html' %}
 		{% include 'browse_items/css.html' %}
-	<h2>Browse Items And Select</h2>
+	<div id = "heading">
+		<h2 id="mainHeading">Browse Items And Select</h2>
+		<button id="viewOrdersButton" type="button" name="viewOrders" class="btn btn-primary"> View Dispatched Orders </button>
+		<h5>Clinic: {{ clinic_name }}</h5>
+	</div>
 	<br/>
 	<table class="table">
 		<thead class="thead-dark">
@@ -27,7 +31,7 @@
 					<td>{{ item.name }}</td>
 					<td>{{ item.category.name }}</td>
 					<td>{{ item.weight }} kg</td>
-					<td><img src={{item.image}}></td>
+					<td><img src="http://localhost:8000/static/{{item.image}}" height="80" width="80"></td>
 				</tr>
 			{% endfor %}
 		</tbody>
@@ -41,13 +45,22 @@
 
 	<br>
 	<div id="showWeight">
-		Maximum weight is 5 kg.<br>
+		Maximum weight is 23.8 kg.<br>
 		<p id="currentWeight"></p>
 	</div>
 
 	<br>
 
-	<input id="submitButton" type="submit" value="Submit" class="show tn btn-success" />
+	<div class="show">
+		<label>Select Priority:</label>
+		<select id="priority_select" class="form-control">
+			<option value="3">HIGH</option>
+			<option value="2">MEDIUM</option>
+			<option value="1">LOW</option>
+		</select>
+		<br/>
+		<input id="submitButton" type="submit" value="Submit" class="btn btn-success" />
+	</div>
 	<p id="warning" class="hide p-3 mb-2 bg-danger text-white">Your weight exceeds the Maximum loading capacity of the drone</p>
 
   </BODY>

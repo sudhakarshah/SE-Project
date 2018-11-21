@@ -2,6 +2,41 @@
 
 	$(document).ready(() => {
 
+		var max_weight = 25;
+		var total_weight = 1.2;
+		var cart = [];
+
+		$('input:checkbox').click(function(evt) {
+			if ($(this).is(":checked")) {
+				addOrder($(this).attr('id'), parseFloat($(this).attr('data-weight')));
+			} else {
+				deleteOrder($(this).attr('id'), parseFloat($(this).attr('data-weight')));
+			}
+			updateWeightBox()
+		});
+
+		function addOrder(id, weight) {
+			if(total_weight + weight > max_weight){
+				alert('Exceed Maximum weight!');
+				$('#' + id).attr('checked', false);
+			}else{
+				cart.push(id);
+				total_weight = total_weight + weight;
+				return true;
+			}
+		}
+
+		function deleteOrder(delete_id, weight){
+			total_weight = total_weight - weight;
+			cart = cart.filter(function(id) {
+    			return id !== delete_id;
+			});
+		}
+
+		function updateWeightBox(){
+			$('#weight-show').html(total_weight.toFixed(2));
+		}
+
 		$.ajaxSetup({
 			beforeSend: (xhr, settings) => {
 				function getCookie(name) {
@@ -25,7 +60,7 @@
 		 });
 
 		$(".submitButton").click((evt) => {
-			let id = $(evt.target).data('order-id');
+			let id = parseInt($(evt.target).attr('data-order-id'));
 
 			$.ajax({
 				type: 'POST',
@@ -33,13 +68,52 @@
 				traditional: true,
 				dataType: 'html',
 				data: {
-					orderId: id
+					'orderIds[]': cart,
+					event: 'LOAD_INTO_DRONE'
 				},
 				success: (result) => {
-					alert("Loaded Into Drone");
-					location.reload();
+					alert("Orders selected!");
+					$('#buttonDiv').removeClass('hide');
+					$('#buttonDiv').addClass('show');
+					$('#shippment-id').html(result);
 				}
 			});
+		});
+
+		$("#viewShippmentButton").click((evt) => {
+
+			let id = $('#shippment-id').html();
+
+			$.ajax({
+				type: 'POST',
+				url: '/app/OrdersToBeLoaded/',
+				traditional: true,
+				dataType: 'json',
+				data: {
+					shippmentId: id,
+					event: 'DOWNLOAD',
+				},
+				success: (result) => {
+				    console.log(result)
+					alert("Downloading");
+					const rows = result
+                    let csvContent = "data:text/csv;charset=utf-8,";
+                    rows.forEach(function(rowArray){
+                       let row = rowArray.join(",");
+                       csvContent += row + "\r\n";
+                    });
+					var encodedUri = encodeURI(csvContent);
+					var link = document.createElement("a");
+                    link.setAttribute("href", encodedUri);
+                    link.setAttribute("download", "shipment.csv");
+                    document.body.appendChild(link); // Required for FF
+                    link.click();
+				}
+			});
+		});
+
+		$("#loadButton").click(() => {
+			window.location='/app/OrdersToBeLoaded/';
 		});
 	});
 
