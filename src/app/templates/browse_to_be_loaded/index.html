@@ -9,7 +9,7 @@
 		{% include 'browse_to_be_loaded/css.html' %}
 		<div id="header">
 			<h2 id="mainHeading" >Order To Be loaded Onto Drone</h2>
-			<input class="submitButton btn btn-primary" type="submit" value="Select Orders" data-order-id='{{ order.id }}'/>
+			<input class="loadDrone btn btn-primary" type="submit" value="Load Drone" data-order-id='{{ order.id }}'/>
 		</div>
 		<br/>
 		<table class="table">
@@ -29,7 +29,7 @@
 			<tbody>
 				{% for order in order_list %}
 					<tr>
-						<td><input type="checkbox" id="{{ order.id }}" data-weight='{{ order.total_weight }}'/></td>
+						<td><input type="checkbox" class="orders" id="{{ order.id }}" data-weight='{{ order.total_weight }}'/></td>
 						<td>{{ order.id }}</td>
 						<td>{% for item in order.items.all %}{{ item.name }}<br/>{% endfor %}</td>
 						<td>{{ order.total_weight }} kg</td>
@@ -53,9 +53,9 @@
 		<br/>
 		<br/>
 		<div id="buttonDiv" class="hide">
-			<h5>Shippment Id -> <span id="shippment-id"></span></h5>
+			<h5> Shippment Id : <span id="shippment-id"></span></h5>
 			<button id="viewShippmentButton" type="button" class="btn btn-warning">Download CSV</button>
-			<button id="loadButton" type="button" class="btn btn-primary">Load Into Drone</button>
+			<!-- <button id="loadButton" type="button" class="btn btn-primary">Load Into Drone</button> -->
 		</div>
   </BODY>
 </HTML>

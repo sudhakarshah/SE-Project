@@ -26,36 +26,36 @@
       "weight": "0.60"
     }
   },
-	{
-		"model": "app.item",
-		"pk": 3,
-		"fields": {
-			"name": "B Braun Medical Lactated Ringers 250ml",
-			"category": 1,
-			"image": "photos/item/B_Braun_Lactated_Ringers_250ml.JPG",
-			"weight": "0.27"
-		}
-	},
-	{
-		"model": "app.item",
-		"pk": 4,
-		"fields": {
-			"name": "ICU Medical Normosol-R Ph 7.4 500ml",
-			"category": 1,
-			"image": "photos/item/ICU_Medical_Normosol_500ml.JPG",
-			"weight": "0.53"
-		}
-	},
-	{
-		"model": "app.item",
-		"pk": 5,
-		"fields": {
-			"name": "Baxter Dextrose 5%, NaCl 0.33% 1000ml",
-			"category": 1,
-			"image": "photos/item/Baxter_Dextrose_NaCl_1000ml.JPG",
-			"weight": "1.05"
-		}
-	},
+  {
+    "model": "app.item",
+    "pk": 3,
+    "fields": {
+      "name": "B Braun Medical Lactated Ringers 250ml",
+      "category": 1,
+      "image": "photos/item/B_Braun_Lactated_Ringers_250ml.JPG",
+      "weight": "0.27"
+    }
+  },
+  {
+    "model": "app.item",
+    "pk": 4,
+    "fields": {
+      "name": "ICU Medical Normosol-R Ph 7.4 500ml",
+      "category": 1,
+      "image": "photos/item/ICU_Medical_Normosol_500ml.JPG",
+      "weight": "0.53"
+    }
+  },
+  {
+    "model": "app.item",
+    "pk": 5,
+    "fields": {
+      "name": "Baxter Dextrose 5%, NaCl 0.33% 1000ml",
+      "category": 1,
+      "image": "photos/item/Baxter_Dextrose_NaCl_1000ml.JPG",
+      "weight": "1.05"
+    }
+  },
   {
     "model": "app.hospitallocation",
     "pk": 1,
@@ -78,76 +78,76 @@
       "distance_from_supplying_hospital": "13.74"
     }
   },
-	{
-		"model": "app.cliniclocation",
-		"pk": 2,
-		"fields": {
-			"name": "North Lamma General Out-patient Clinic",
-			"latitute": "22.224295",
-			"longitute": "114.111098",
-			"altitude": "20",
-			"supplying_hospital": 1,
-			"distance_from_supplying_hospital": "5.52"
-		}
-	},
-	{
-		"model": "app.cliniclocation",
-		"pk": 3,
-		"fields": {
-			"name": "Peng Chau General Out-patient Clinic",
-			"latitute": "22.283621",
-			"longitute": "114.039154",
-			"altitude": "8",
-			"supplying_hospital": 1,
-			"distance_from_supplying_hospital": "9.61"
-		}
-	},
-	{
-		"model": "app.cliniclocation",
-		"pk": 4,
-		"fields": {
-			"name": "Sok Kwu Wan General Out-patient Clinic",
-			"latitute": "22.205606",
-			"longitute": "114.131597",
-			"altitude": "21.000000",
-			"supplying_hospital": 1,
-			"distance_from_supplying_hospital": "7.19"
-		}
-	},
-	{
-		"model": "app.cliniclocation",
-		"pk": 5,
-		"fields": {
-			"name": "Tai O Jockey Club General Out-patient Clinic",
-			"latitute": "22.255725",
-			"longitute": "113.857972",
-			"altitude": "2",
-			"supplying_hospital": 1,
-			"distance_from_supplying_hospital": "28.18"
-		}
-	},
-	{
-		"model": "app.cliniclocation",
-		"pk": 6,
-		"fields": {
-			"name": "Aberdeen Jockey Club General Out-patient Clinic",
-			"latitute": "22.249740",
-			"longitute": "114.156384",
-			"altitude": "44",
-			"supplying_hospital": 1,
-			"distance_from_supplying_hospital": "3.44"
-		}
-	},
-	{
-		"model": "app.cliniclocation",
-		"pk": 7,
-		"fields": {
-			"name": " Ap Lei Chau General Out-patient Clinic",
-			"latitute": "22.243243",
-			"longitute": "114.153765",
-			"altitude": "56",
-			"supplying_hospital": 1,
-			"distance_from_supplying_hospital": "3.79"
-		}
-	}
+  {
+    "model": "app.cliniclocation",
+    "pk": 2,
+    "fields": {
+      "name": "North Lamma General Out-patient Clinic",
+      "latitute": "22.224295",
+      "longitute": "114.111098",
+      "altitude": "20",
+      "supplying_hospital": 1,
+      "distance_from_supplying_hospital": "5.52"
+    }
+  },
+  {
+    "model": "app.cliniclocation",
+    "pk": 3,
+    "fields": {
+      "name": "Peng Chau General Out-patient Clinic",
+      "latitute": "22.283621",
+      "longitute": "114.039154",
+      "altitude": "8",
+      "supplying_hospital": 1,
+      "distance_from_supplying_hospital": "9.61"
+    }
+  },
+  {
+    "model": "app.cliniclocation",
+    "pk": 4,
+    "fields": {
+      "name": "Sok Kwu Wan General Out-patient Clinic",
+      "latitute": "22.205606",
+      "longitute": "114.131597",
+      "altitude": "21.000000",
+      "supplying_hospital": 1,
+      "distance_from_supplying_hospital": "7.19"
+    }
+  },
+  {
+    "model": "app.cliniclocation",
+    "pk": 5,
+    "fields": {
+      "name": "Tai O Jockey Club General Out-patient Clinic",
+      "latitute": "22.255725",
+      "longitute": "113.857972",
+      "altitude": "2",
+      "supplying_hospital": 1,
+      "distance_from_supplying_hospital": "28.18"
+    }
+  },
+  {
+    "model": "app.cliniclocation",
+    "pk": 6,
+    "fields": {
+      "name": "Aberdeen Jockey Club General Out-patient Clinic",
+      "latitute": "22.249740",
+      "longitute": "114.156384",
+      "altitude": "44",
+      "supplying_hospital": 1,
+      "distance_from_supplying_hospital": "3.44"
+    }
+  },
+  {
+    "model": "app.cliniclocation",
+    "pk": 7,
+    "fields": {
+      "name": " Ap Lei Chau General Out-patient Clinic",
+      "latitute": "22.243243",
+      "longitute": "114.153765",
+      "altitude": "56",
+      "supplying_hospital": 1,
+      "distance_from_supplying_hospital": "3.79"
+    }
+  }
 ]

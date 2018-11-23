@@ -7,6 +7,7 @@
 		var cart = [];
 
 		$('input:checkbox').click(function(evt) {
+			console.log($(this).attr('id'), "inside input checkbox function");
 			if ($(this).is(":checked")) {
 				addOrder($(this).attr('id'), parseFloat($(this).attr('data-weight')));
 			} else {
@@ -16,7 +17,7 @@
 		});
 
 		function addOrder(id, weight) {
-			if(total_weight + weight > max_weight){
+			if (total_weight + weight > max_weight) {
 				alert('Exceed Maximum weight!');
 				$('#' + id).attr('checked', false);
 			}else{
@@ -28,7 +29,7 @@
 
 		function deleteOrder(delete_id, weight){
 			total_weight = total_weight - weight;
-			cart = cart.filter(function(id) {
+			cart = cart.filter( (id) => {
     			return id !== delete_id;
 			});
 		}
@@ -59,9 +60,10 @@
 			}
 		 });
 
-		$(".submitButton").click((evt) => {
+		$(".loadDrone").click((evt) => {
 			let id = parseInt($(evt.target).attr('data-order-id'));
-
+			// function to select top orders until weight permits
+			// and then post request for it
 			$.ajax({
 				type: 'POST',
 				url: '/app/OrdersToBeLoaded/',
@@ -72,10 +74,14 @@
 					event: 'LOAD_INTO_DRONE'
 				},
 				success: (result) => {
-					alert("Orders selected!");
-					$('#buttonDiv').removeClass('hide');
-					$('#buttonDiv').addClass('show');
-					$('#shippment-id').html(result);
+					result = JSON.parse(result);
+					if (result.success) {
+						$('#buttonDiv').removeClass('hide');
+						$('#buttonDiv').addClass('show');
+						$('#shippment-id').html(result.shipmentId);
+					} else {
+						alert(result.reason)
+					}
 				}
 			});
 		});
@@ -94,27 +100,30 @@
 					event: 'DOWNLOAD',
 				},
 				success: (result) => {
-				    console.log(result)
-					alert("Downloading");
-					const rows = result
-                    let csvContent = "data:text/csv;charset=utf-8,";
-                    rows.forEach(function(rowArray){
-                       let row = rowArray.join(",");
-                       csvContent += row + "\r\n";
-                    });
-					var encodedUri = encodeURI(csvContent);
-					var link = document.createElement("a");
-                    link.setAttribute("href", encodedUri);
-                    link.setAttribute("download", "shipment.csv");
-                    document.body.appendChild(link); // Required for FF
-                    link.click();
+					if (!result.success) {
+						alert(result.reason);
+						return;
+					}
+					const rows = result.totalData;
+          let csvContent = "data:text/csv;charset=utf-8,";
+          rows.forEach(function(rowArray){
+             let row = rowArray.join(",");
+             csvContent += row + "\r\n";
+          });
+					let encodedUri = encodeURI(csvContent);
+					let link = document.createElement("a");
+          link.setAttribute("href", encodedUri);
+          link.setAttribute("download", "shipment.csv");
+          document.body.appendChild(link); // Required for FF
+          link.click();
 				}
 			});
 		});
 
-		$("#loadButton").click(() => {
-			window.location='/app/OrdersToBeLoaded/';
-		});
+		// $("#loadButton").click(() => {
+		// 	// update the record
+		// 	window.location='/app/OrdersToBeLoaded/';
+		// });
 	});
 
 </script>

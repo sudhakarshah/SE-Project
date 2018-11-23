@@ -9,6 +9,8 @@ urlpatterns = [
     path('registration/', views.register_details),
     path('OrdersToBeProcessed/', views.browse_to_be_processed),
 	path('ConfirmOrderDelivery/', views.browse_orders),
-    path('', views.index),
+	path('home/', views.home),
     path('RegisterSendToken/', views.register_send_token),
+	path('logout/', views.signout),
+	path('', views.signin),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT+'/photos')
