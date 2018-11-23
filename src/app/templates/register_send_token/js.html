@@ -25,7 +25,12 @@
 		 });
 
 		$("#register").click((evt) => {
-
+			let email = $('#email').val();
+			let role = $('#role').val();
+			if (!email || !role) {
+				alert('empty fields');
+				return;
+			}
 			$.ajax({
 				type: 'POST',
 				url: '/app/RegisterSendToken/',
@@ -34,16 +39,19 @@
 				data: {
 					email: $('#email').val(),
 					role_choices: $('#role').val(),
-					clinicLocation: 'HK',
 				},
 				success: (result) => {
-					alert("Token Sent");
-					location.reload();
+					result = JSON.parse(result);
+					if (result.success) {
+						alert("Token Sent");
+						location.reload();
+					} else {
+						alert("Problem in creating token and sending");
+						location.reload();
+					}
 				}
 			});
 		});
 	});
 
 </script>
-
-

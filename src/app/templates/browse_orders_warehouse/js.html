@@ -1,7 +1,6 @@
 <script>
 
 		$(document).ready(() => {
-	
 			$.ajaxSetup({
 				beforeSend: (xhr, settings) => {
 					function getCookie(name) {
@@ -23,10 +22,9 @@
 					}
 				}
 			 });
-	
+
 			$(".readyProcessButton").click((evt) => {
 				let id = $(evt.target).data('order-id');
-	
 				$.ajax({
 					type: 'POST',
 					url: '/app/OrdersToBeProcessed/',
@@ -37,15 +35,19 @@
 						event: 'READY_TO_PROCESS',
 					},
 					success: (result) => {
-						alert("Ready To Process");
-						location.reload();
+						result = JSON.parse(result);
+						if (result.success) {
+							alert("Ready To Process");
+							location.reload();
+						} else {
+							alert(result.reason);
+						}
 					}
 				});
 			});
 
 			$(".completeProcessButton").click((evt) => {
 				let id = $(evt.target).data('order-id');
-	
 				$.ajax({
 					type: 'POST',
 					url: '/app/OrdersToBeProcessed/',
@@ -56,14 +58,19 @@
 						event: 'COMPLETE_PROCESSING',
 					},
 					success: (result) => {
-						alert("Complete Processing");
-						location.reload();
+						result = JSON.parse(result);
+						if (result.success) {
+							alert("Completed Processing");
+							location.reload();
+						} else {
+							alert(result.reason);
+						}
 					}
 				});
 			});
+
 			$(".downloadButton").click((evt) => {
 				let id = $(evt.target).data('order-id');
-	
 				$.ajax({
 					type: 'POST',
 					url: '/app/OrdersToBeProcessed/',
@@ -72,15 +79,15 @@
 						event: 'DOWNLOAD_SHIPPING_LABEL',
 					},
 					success: (result) => {
-						var blob=new Blob([result]);
-						var link=document.createElement('a');
-						link.href=window.URL.createObjectURL(blob);
-						link.download="shipping_label_" + id + ".pdf";
+						// download of shipping label being executed
+						let blob = new Blob([result]);
+						let link = document.createElement('a');
+						link.href = window.URL.createObjectURL(blob);
+						link.download = "shipping_label_" + id + ".pdf";
 						link.click();
 					}
 				});
 			});
 		});
-	
+
 	</script>
-	

@@ -34,25 +34,27 @@
 		});
 
 		$("#login").click((evt) => {
+			let username = $('#username').val();
+			let password = $('#password').val();
+			// incomplete form
+			if (!username || !password) {
+				console.log("fields not filled");
+				return;
+			}
 			$.ajax({
 				type: 'POST',
 				url: '/app/',
 				traditional: true,
 				dataType: 'json',
 				data: {
-				    username: $('#username').val(),
-					password: $('#password').val(),
+				  username: username,
+					password: password,
 				},
 				success: (result) => {
-					if (result.status == "Success") {
-					    if (result.role == "CLINIC_MANAGER")
-					        window.location.replace("http://localhost:8000/app/items");
-					    else if (result.role == "WAREHOUSE_PERSONNEL")
-					        window.location.replace("http://localhost:8000/app/OrdersToBeProcessed");
-					    else if (result.role == "DISPATCHER")
-					        window.location.replace("http://localhost:8000/app/OrdersToBeLoaded");
-					}
-					else {
+					console.log(result);
+					if (result.success) {
+							window.location = result.pageLink;
+					} else {
 					    alert("Login Unsuccessful");
 					    location.reload();
 					}

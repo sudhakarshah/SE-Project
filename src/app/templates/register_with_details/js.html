@@ -25,6 +25,23 @@
 		 });
 
 		$("#register").click((evt) => {
+			let firstName = $('#firstname').val();
+			let lastName = $('#lastname').val();
+			let email = $('#email').val();
+			let role = $('#role').val();
+			let clinicName = $('#clinicName').val();
+			let username = $('#username').val();
+			let password: $('#password').val();
+			let reEnterPassword: $('#reEnterPassword').val();
+
+			if (!firstName || !lastName || !username || !password || (need_clinic_location && !clinicName)) {
+				alert('empty fields');
+				return;
+			}
+			if (password != reEnterPassword) {
+				alert('passwords doesnt match');
+				return;
+			}
 
 			$.ajax({
 				type: 'POST',
@@ -32,17 +49,22 @@
 				traditional: true,
 				dataType: 'html',
 				data: {
-				    firstName: $('#firstname').val(),
-				    lastName: $('#lastname').val(),
-					email: $('#email').val(),
-					role: $('#role').val(),
-					clinicName: $('#clinicName').val(),
-					username: $('#username').val(),
-					password: $('#password').val(),
+				  firstName: firstName,
+				  lastName: lastName,
+					email: email,
+					role: role,
+					clinicName: clinicName,
+					username: username,
+					password: password,
 				},
 				success: (result) => {
-					alert("Registration sent!");
-					window.location.replace("http://localhost:8000/app/");
+					result = JSON.parse(result);
+					if (result.success) {
+						alert("Registration sent!");
+						window.location = result.pageLink;
+					} else {
+						alert(result.reason);
+					}
 				}
 			});
 		});

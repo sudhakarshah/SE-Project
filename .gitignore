@@ -2,3 +2,4 @@
 __pycache__/
 src/db.sqlite3
 .idea
+*shipment*.csv

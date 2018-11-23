@@ -172,8 +172,13 @@
 					'order[]': orderData
 				},
 				success: (result) => {
-					alert("Your Order Placed");
-					location.reload();
+					result = JSON.parse(result);
+					if (result.success) {
+						alert("Your Order Placed");
+						location.reload();
+					} else {
+						alert(result.reason);
+					}
 				}
 			});
 		});
