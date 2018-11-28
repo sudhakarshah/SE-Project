@@ -31,10 +31,11 @@
 			let role = $('#role').val();
 			let clinicName = $('#clinicName').val();
 			let username = $('#username').val();
-			let password: $('#password').val();
-			let reEnterPassword: $('#reEnterPassword').val();
+			let password = $('#password').val();
+			let reEnterPassword = $('#reenterpassword').val();
+			let need_clinic_location = "{{need_clinic_location}}"
 
-			if (!firstName || !lastName || !username || !password || (need_clinic_location && !clinicName)) {
+			if (!firstName || !lastName || !username || !password || (need_clinic_location=="True" && !clinicName)) {
 				alert('empty fields');
 				return;
 			}
