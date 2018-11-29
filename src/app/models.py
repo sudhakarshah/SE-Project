@@ -167,6 +167,10 @@ class Order(models.Model):
 		order.save()
 		return order
 
+	def delete_order(id):
+		order = Order.objects.get(id=id)
+		order.delete()
+
 	def ready_to_process(id):
 		order = Order.objects.get(id=id)
 		order.status = Order.STATUS_CHOICES[1][0]
