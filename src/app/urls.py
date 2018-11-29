@@ -9,6 +9,7 @@ urlpatterns = [
     path('registration/', views.register_details),
     path('OrdersToBeProcessed/', views.browse_to_be_processed),
 	path('ConfirmOrderDelivery/', views.browse_orders),
+	path('BrowseUndeliveredOrders/', views.browse_undelivered_orders),
 	path('home/', views.home),
     path('RegisterSendToken/', views.register_send_token),
 	path('logout/', views.signout),
