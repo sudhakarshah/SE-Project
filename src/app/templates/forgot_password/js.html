@@ -25,37 +25,30 @@
 			}
 		 });
 
-        $("#registerPage").click(() => {
-			window.location='/app/RegisterSendToken/';
-		});
-
-		$("#forgotPassword").click(() => {
-			window.location='/app/forgotPassword/';
-		});
-
-		$("#login").click((evt) => {
+		$("#forgotPassword").click((evt) => {
 			let username = $('#username').val();
-			let password = $('#password').val();
+			let email = $('#email').val();
 			// incomplete form
-			if (!username || !password) {
-				console.log("fields not filled");
+			if (!username || !email) {
+				console.log("Fields not filled");
 				return;
 			}
 			$.ajax({
 				type: 'POST',
-				url: '/app/',
+				url: '/app/forgotPassword/',
 				traditional: true,
 				dataType: 'json',
 				data: {
-				  username: username,
-					password: password,
+				    username: username,
+					email: email,
 				},
 				success: (result) => {
 					console.log(result);
 					if (result.success) {
-							window.location = result.pageLink;
+					    alert("Password Request sent to admin");
+						window.location = result.pageLink;
 					} else {
-					    alert("Login Unsuccessful");
+					    alert(result.reason);
 					    location.reload();
 					}
 				}

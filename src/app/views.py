@@ -316,44 +316,57 @@ def browse_orders(request):
 
 @csrf_exempt
 def edit_profile(request):
+    result = {
+        'success': False,
+        'reason': "",
+        'pageLink': "",
+    }
+    if not request.user.is_authenticated:
+        result['reason'] = "request not authenticated"
+        print("not authenticated")
+        return HttpResponse(json.dumps(result), content_type="application/json")
+    if request.method == 'POST':
+        password = request.POST['password']
+        profile = Profile.objects.get(user=request.user)
+        profile.update_details(request)
+        if request.POST['changePassword'] == "true":
+            if not request.user.check_password(password):
+                result['reason'] = "Old Password does not match"
+                print("Password does not match")
+                return HttpResponse(json.dumps(result), content_type="application/json")
+            else:
+                profile.update_password(request)
+        result['success'] = True
+        result['pageLink'] = '/app/home'
+        return HttpResponse(json.dumps(result), content_type="application/json")
+    else:
+        profile = Profile.objects.get(user=request.user)
+        template = loader.get_template('profile/index.html')
+        context = {
+            'user': request.user,
+            'profile': profile
+        }
+        return HttpResponse(template.render(context, request))
+
+@csrf_exempt
+def forgot_password(request):
     if request.method == 'POST':
         result = {
             'success': False,
             'reason': "",
             'pageLink': "",
         }
-        password = request.POST['password']
-        if not request.user.is_authenticated:
-            result['reason'] = "request not authenticated"
-            print("not authenticated")
-            return HttpResponse(json.dumps(result), content_type="application/json")
+        if not User.objects.filter(username=request.POST['username']).exists():
+            result['reason'] = "Username does not exist"
         else:
-            profile = Profile.objects.get(user=request.user)
-            profile.update_details(request)
-            if request.POST['changePassword']:
-                if not request.user.check_password(password):
-                    result['reason'] = "Old Password does not match"
-                    print("Password does not match")
-                    return HttpResponse(json.dumps(result), content_type="application/json")
-                else:
-                    profile.update_password(request)
-            result['success'] = True
-            result['pageLink'] = '/app/home'
-            return HttpResponse(json.dumps(result), content_type="application/json")
+            user = User.objects.get(username=request.POST['username'])
+            if user.email != request.POST['email']:
+                result['reason'] = "Incorrect matching email"
+            else:
+                profile = Profile.objects.get(user=user)
+                profile.update_forgot_password()
+                result['success'] = True
+                result['pageLink'] = '/app'
+        return HttpResponse(json.dumps(result), content_type="application/json")
     else:
-        result = {
-            'success': False,
-            'reason': "",
-        }
-        if not request.user.is_authenticated:
-            result['reason'] = "request not authenticated"
-            print("not authenticated")
-            return HttpResponse(json.dumps(result), content_type="application/json")
-        else:
-            profile = Profile.objects.get(user=request.user)
-            template = loader.get_template('profile/index.html')
-            context = {
-                'user': request.user,
-                'profile': profile
-            }
-            return HttpResponse(template.render(context, request))
+        return render(request, 'forgot_password/index.html')

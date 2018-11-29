@@ -10,6 +10,7 @@ urlpatterns = [
     path('OrdersToBeProcessed/', views.browse_to_be_processed),
 	path('ConfirmOrderDelivery/', views.browse_orders),
 	path('home/', views.home),
+    path('forgotPassword/', views.forgot_password),
     path('Profile/', views.edit_profile),
     path('RegisterSendToken/', views.register_send_token),
 	path('logout/', views.signout),
