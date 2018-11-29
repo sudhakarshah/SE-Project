@@ -1,6 +1,13 @@
 <script>
 
 		$(document).ready(() => {
+
+			if ($('.orders').length > 0) {
+				$('.packOrder').removeAttr('disabled');
+			} else {
+				$('.packOrder').attr('disabled','disabled');
+			}
+
 			$.ajaxSetup({
 				beforeSend: (xhr, settings) => {
 					function getCookie(name) {
@@ -23,8 +30,8 @@
 				}
 			 });
 
-			$(".readyProcessButton").click((evt) => {
-				let id = $(evt.target).data('order-id');
+			$(".packOrder").click((evt) => {
+				let id = $('.orders')[0].id
 				$.ajax({
 					type: 'POST',
 					url: '/app/OrdersToBeProcessed/',

@@ -35,13 +35,21 @@ class ClinicLocation(models.Model):
 	supplying_hospital = models.ForeignKey(HospitalLocation, on_delete=models.CASCADE, null=True)
 	distance_from_supplying_hospital = models.DecimalField(max_digits=4, decimal_places=2)
 
+
 class InterClinicDistance(models.Model):
 	location_a = models.ForeignKey(ClinicLocation, on_delete=models.CASCADE, null=True, related_name='location_a')
 	location_b = models.ForeignKey(ClinicLocation, on_delete=models.CASCADE, null=True, related_name='location_b')
 	distance= models.DecimalField(max_digits=4, decimal_places=2)
 
 	def get_distance(a,b):
-		return 0
+		clinic_a = ClinicLocation.objects.get(id=a)
+		clinic_b = ClinicLocation.objects.get(id=b)
+		obj = None
+		try:
+			obj = InterClinicDistance.objects.get(location_a=clinic_a, location_b=clinic_b)
+		except InterClinicDistance.DoesNotExist:
+			obj = InterClinicDistance.objects.get(location_a=clinic_b, location_b=clinic_a)
+		return obj.distance
 
 class InitialTokenRegistration(models.Model):
 	unique_token = models.CharField(max_length=64, unique=True)

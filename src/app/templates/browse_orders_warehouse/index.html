@@ -22,12 +22,11 @@
 					<th scope="col">Priority</th>
 					<th scope="col">Order status</th>
 					<th scope="col">Date</th>
-					<th scope="col">Action</th>
 				</tr>
 			</thead>
 			<tbody>
 				{% for order in process_order_list %}
-					<tr>
+					<tr class="orders" id='{{ order.id }}'>
 						<td>{{ order.id }}</td>
 						<td>{% for item in order.items.all %}{{ item.name }}<br/>{% endfor %}</td>
 						<td>{{ order.total_weight }} kg</td>
@@ -36,15 +35,15 @@
 						<td>{{ order.get_priority_display }}</td>
 						<td>{{ order.status }}</td>
 						<td>{{ order.date_order_placed }}</td>
-						<td><input class="readyProcessButton btn btn-success" type="submit" value="Ready To Process" data-order-id='{{ order.id }}'/></td>
 					</tr>
 				{% endfor %}
 			</tbody>
 		</table>
 
 		<br/>
+		<input class="packOrder btn btn-success" type="submit" value="Remove and pack top order" data-order-id='{{ order.id }}'/>
 		<br/>
-
+		<br/>
 		<h2>Order Which Picking And Packing Started</h2>
 		<br/>
 		<table class="table">

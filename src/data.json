@@ -149,5 +149,194 @@
       "supplying_hospital": 1,
       "distance_from_supplying_hospital": "3.79"
     }
+  },
+  {
+    "model": "app.interclinicdistance",
+    "pk": 1,
+    "fields": {
+      "location_a": 1,
+      "location_b": 2,
+      "distance": "12.54"
+    }
+  },
+  {
+    "model": "app.interclinicdistance",
+    "pk": 2,
+    "fields": {
+      "location_a": 1,
+      "location_b": 3,
+      "distance": "4.68"
+    }
+  },
+  {
+    "model": "app.interclinicdistance",
+    "pk": 3,
+    "fields": {
+      "location_a": 1,
+      "location_b": 4,
+      "distance": "15.32"
+    }
+  },
+  {
+    "model": "app.interclinicdistance",
+    "pk": 4,
+    "fields": {
+      "location_a": 1,
+      "location_b": 5,
+      "distance": "14.44"
+    }
+  },
+  {
+    "model": "app.interclinicdistance",
+    "pk": 5,
+    "fields": {
+      "location_a": 1,
+      "location_b": 6,
+      "distance": "16.41"
+    }
+  },
+  {
+    "model": "app.interclinicdistance",
+    "pk": 6,
+    "fields": {
+      "location_a": 1,
+      "location_b": 7,
+      "distance": "16.24"
+    }
+  },
+  {
+    "model": "app.interclinicdistance",
+    "pk": 7,
+    "fields": {
+      "location_a": 2,
+      "location_b": 3,
+      "distance": "9.92"
+    }
+  },
+  {
+    "model": "app.interclinicdistance",
+    "pk": 8,
+    "fields": {
+      "location_a": 2,
+      "location_b": 4,
+      "distance": "2.96"
+    }
+  },
+  {
+    "model": "app.interclinicdistance",
+    "pk": 9,
+    "fields": {
+      "location_a": 2,
+      "location_b": 5,
+      "distance": "26.29"
+    }
+  },
+  {
+    "model": "app.interclinicdistance",
+    "pk": 10,
+    "fields": {
+      "location_a": 2,
+      "location_b": 6,
+      "distance": "5.45"
+    }
+  },
+  {
+    "model": "app.interclinicdistance",
+    "pk": 11,
+    "fields": {
+      "location_a": 2,
+      "location_b": 7,
+      "distance": "4.87"
+    }
+  },
+  {
+    "model": "app.interclinicdistance",
+    "pk": 12,
+    "fields": {
+      "location_a": 3,
+      "location_b": 4,
+      "distance": "12.88"
+    }
+  },
+  {
+    "model": "app.interclinicdistance",
+    "pk": 13,
+    "fields": {
+      "location_a": 3,
+      "location_b": 5,
+      "distance": "18.90"
+    }
+  },
+  {
+    "model": "app.interclinicdistance",
+    "pk": 14,
+    "fields": {
+      "location_a": 3,
+      "location_b": 6,
+      "distance": "12.64"
+    }
+  },
+  {
+    "model": "app.interclinicdistance",
+    "pk": 15,
+    "fields": {
+      "location_a": 3,
+      "location_b": 7,
+      "distance": "12.62"
+    }
+  },
+  {
+    "model": "app.interclinicdistance",
+    "pk": 16,
+    "fields": {
+      "location_a": 4,
+      "location_b": 5,
+      "distance": "28.71"
+    }
+  },
+  {
+    "model": "app.interclinicdistance",
+    "pk": 17,
+    "fields": {
+      "location_a": 4,
+      "location_b": 6,
+      "distance": "5.53"
+    }
+  },
+  {
+    "model": "app.interclinicdistance",
+    "pk": 18,
+    "fields": {
+      "location_a": 4,
+      "location_b": 7,
+      "distance": "4.77"
+    }
+  },
+  {
+    "model": "app.interclinicdistance",
+    "pk": 19,
+    "fields": {
+      "location_a": 5,
+      "location_b": 6,
+      "distance": "30.72"
+    }
+  },
+  {
+    "model": "app.interclinicdistance",
+    "pk": 20,
+    "fields": {
+      "location_a": 5,
+      "location_b": 7,
+      "distance": "30.47"
+    }
+  },
+  {
+    "model": "app.interclinicdistance",
+    "pk": 21,
+    "fields": {
+      "location_a": 6,
+      "location_b": 7,
+      "distance": "0.77"
+    }
   }
 ]
