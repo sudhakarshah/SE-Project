@@ -313,3 +313,47 @@ def browse_orders(request):
             'order_list': orders,
         }
         return HttpResponse(template.render(context, request))
+
+@csrf_exempt
+def edit_profile(request):
+    if request.method == 'POST':
+        result = {
+            'success': False,
+            'reason': "",
+            'pageLink': "",
+        }
+        password = request.POST['password']
+        if not request.user.is_authenticated:
+            result['reason'] = "request not authenticated"
+            print("not authenticated")
+            return HttpResponse(json.dumps(result), content_type="application/json")
+        else:
+            profile = Profile.objects.get(user=request.user)
+            profile.update_details(request)
+            if request.POST['changePassword']:
+                if not request.user.check_password(password):
+                    result['reason'] = "Old Password does not match"
+                    print("Password does not match")
+                    return HttpResponse(json.dumps(result), content_type="application/json")
+                else:
+                    profile.update_password(request)
+            result['success'] = True
+            result['pageLink'] = '/app/home'
+            return HttpResponse(json.dumps(result), content_type="application/json")
+    else:
+        result = {
+            'success': False,
+            'reason': "",
+        }
+        if not request.user.is_authenticated:
+            result['reason'] = "request not authenticated"
+            print("not authenticated")
+            return HttpResponse(json.dumps(result), content_type="application/json")
+        else:
+            profile = Profile.objects.get(user=request.user)
+            template = loader.get_template('profile/index.html')
+            context = {
+                'user': request.user,
+                'profile': profile
+            }
+            return HttpResponse(template.render(context, request))

@@ -1,0 +1,84 @@
+<script>
+
+	$(document).ready(() => {
+
+		$.ajaxSetup({
+			beforeSend: (xhr, settings) => {
+				function getCookie(name) {
+					var cookieValue = null;
+					if (document.cookie && document.cookie != '') {
+						var cookies = document.cookie.split(';');
+						for (var i = 0; i < cookies.length; i++) {
+							var cookie = jQuery.trim(cookies[i]);
+							if (cookie.substring(0, name.length + 1) == (name + '=')) {
+								cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+								break;
+							}
+						}
+					}
+					return cookieValue;
+				}
+				if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+					xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+				}
+			}
+		 });
+
+		$("#edit").click((evt) => {
+			let firstName = $('#firstname').val();
+			let lastName = $('#lastname').val();
+			let email = $('#email').val();
+			let password = $('#password').val();
+			let newPassword = $('#newPassword').val();
+			let reEnterNewPassword = $('#reEnterNewPassword').val();
+            let changePassword = false;
+
+            // Checking if any password field is empty (given that all are not empty)
+            if (!((password && newPassword && reEnterNewPassword) || (!password && !newPassword && !reEnterNewPassword))) {
+                alert('Empty Password fields');
+				return;
+			}
+
+			if (!firstName || !lastName || !email) {
+				alert('empty fields');
+				return;
+			}
+
+            // Checking if there is a change in password and if they match
+			if (password && newPassword && reEnterNewPassword) {
+			    if (newPassword != reEnterNewPassword) {
+                    alert('New Passwords dont match');
+                    return;
+                }
+                else {
+                    changePassword = true;
+                }
+			}
+
+			$.ajax({
+				type: 'POST',
+				url: '/app/Profile/',
+				traditional: true,
+				dataType: 'html',
+				data: {
+				    firstName: firstName,
+				    lastName: lastName,
+					email: email,
+					password: password,
+					newPassword: newPassword,
+					changePassword: changePassword,
+				},
+				success: (result) => {
+					result = JSON.parse(result);
+					if (result.success) {
+						alert("Profile updated!");
+						window.location = result.pageLink;
+					} else {
+						alert(result.reason);
+					}
+				}
+			});
+		});
+	});
+
+</script>

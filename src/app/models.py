@@ -94,6 +94,20 @@ class Profile(models.Model):
 		user_details.clinic_location = clinicLocation
 		user_details.save()
 
+	def update_details(self, request):
+		user = request.user
+		user.email = request.POST['email']
+		user.save()
+		self.first_name = request.POST['firstName']
+		self.last_name = request.POST['lastName']
+		self.save()
+
+	def update_password(self, request):
+		user = request.user
+		user.set_password(request.POST['newPassword'])
+		user.save()
+		self.save()
+
 	def __str__(self):
 		return self.first_name
 
