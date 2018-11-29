@@ -12,6 +12,7 @@ urlpatterns = [
 	path('BrowseUndeliveredOrders/', views.browse_undelivered_orders),
 	path('home/', views.home),
     path('forgotPassword/', views.forgot_password),
+    path('enterNewPassword/', views.enter_new_password),
     path('Profile/', views.edit_profile),
     path('RegisterSendToken/', views.register_send_token),
 	path('logout/', views.signout),

@@ -111,9 +111,8 @@ class Profile(models.Model):
 		self.last_name = request.POST['lastName']
 		self.save()
 
-	def update_password(self, request):
-		user = request.user
-		user.set_password(request.POST['newPassword'])
+	def update_password(self, user, password):
+		user.set_password(password)
 		user.save()
 		self.save()
 
