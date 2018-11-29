@@ -2,40 +2,37 @@
 
 	$(document).ready(() => {
 
-		var max_weight = 25;
-		var total_weight = 1.2;
-		var cart = [];
+		const max_weight = 25;
+		let total_weight = 1.2;
+		let cart = [];
+		let list = $('.orders');
+		let is_cart_full = false;
 
-		$('input:checkbox').click(function(evt) {
-			console.log($(this).attr('id'), "inside input checkbox function");
-			if ($(this).is(":checked")) {
-				addOrder($(this).attr('id'), parseFloat($(this).attr('data-weight')));
-			} else {
-				deleteOrder($(this).attr('id'), parseFloat($(this).attr('data-weight')));
-			}
-			updateWeightBox()
-		});
+		// Onload of page, select the top items for loading to drone and highlight
+		for (let i = 0; i < list.length && !is_cart_full; i++) {
+				is_cart_full = addOrder(list[i].id, parseFloat(list[i].attributes[2].nodeValue));
+				if (!is_cart_full) {
+					list[i].style.backgroundColor = 'yellow';
+				}
+		}
+
+		// if elements in cart
+		if (cart.length > 0) {
+			$('#dispatch').removeAttr('disabled');
+		} else {
+			$('#dispatch').attr('disabled','disabled');
+		}
+
+		$('#weight-show').html(total_weight.toFixed(2));
 
 		function addOrder(id, weight) {
 			if (total_weight + weight > max_weight) {
-				alert('Exceed Maximum weight!');
-				$('#' + id).attr('checked', false);
-			}else{
+				return true;
+			} else {
 				cart.push(id);
 				total_weight = total_weight + weight;
-				return true;
+				return false;
 			}
-		}
-
-		function deleteOrder(delete_id, weight){
-			total_weight = total_weight - weight;
-			cart = cart.filter( (id) => {
-    			return id !== delete_id;
-			});
-		}
-
-		function updateWeightBox(){
-			$('#weight-show').html(total_weight.toFixed(2));
 		}
 
 		$.ajaxSetup({
@@ -60,10 +57,8 @@
 			}
 		 });
 
-		$(".loadDrone").click((evt) => {
-			let id = parseInt($(evt.target).attr('data-order-id'));
-			// function to select top orders until weight permits
-			// and then post request for it
+		$("#dispatch").click((evt) => {
+
 			$.ajax({
 				type: 'POST',
 				url: '/app/OrdersToBeLoaded/',
@@ -75,55 +70,27 @@
 				},
 				success: (result) => {
 					result = JSON.parse(result);
-					if (result.success) {
-						$('#buttonDiv').removeClass('hide');
-						$('#buttonDiv').addClass('show');
-						$('#shippment-id').html(result.shipmentId);
-					} else {
-						alert(result.reason)
-					}
-				}
-			});
-		});
-
-		$("#viewShippmentButton").click((evt) => {
-
-			let id = $('#shippment-id').html();
-
-			$.ajax({
-				type: 'POST',
-				url: '/app/OrdersToBeLoaded/',
-				traditional: true,
-				dataType: 'json',
-				data: {
-					shippmentId: id,
-					event: 'DOWNLOAD',
-				},
-				success: (result) => {
 					if (!result.success) {
 						alert(result.reason);
 						return;
 					}
 					const rows = result.totalData;
-          let csvContent = "data:text/csv;charset=utf-8,";
-          rows.forEach(function(rowArray){
-             let row = rowArray.join(",");
-             csvContent += row + "\r\n";
-          });
+					let csvContent = "data:text/csv;charset=utf-8,";
+					rows.forEach(function(rowArray){
+						 let row = rowArray.join(",");
+						 csvContent += row + "\r\n";
+					});
 					let encodedUri = encodeURI(csvContent);
 					let link = document.createElement("a");
-          link.setAttribute("href", encodedUri);
-          link.setAttribute("download", "shipment.csv");
-          document.body.appendChild(link); // Required for FF
-          link.click();
+					link.setAttribute("href", encodedUri);
+					link.setAttribute("download", "shipment.csv");
+					document.body.appendChild(link); // Required for FF
+					link.click();
+					alert('orders loaded to drone and dispatched')
+					location.reload();
 				}
 			});
 		});
-
-		// $("#loadButton").click(() => {
-		// 	// update the record
-		// 	window.location='/app/OrdersToBeLoaded/';
-		// });
 	});
 
 </script>
