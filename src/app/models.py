@@ -49,10 +49,6 @@ class InterClinicDistance(models.Model):
 			obj = InterClinicDistance.objects.get(location_a=clinic_a, location_b=clinic_b)
 		except InterClinicDistance.DoesNotExist:
 			obj = InterClinicDistance.objects.get(location_a=clinic_b, location_b=clinic_a)
-
-		print(a,b,obj)
-		# if obj is None:
-		# 	obj = InterClinicDistance.objects.get(location_a=clinic_b, location_b=clinic_a)
 		return obj.distance
 
 class InitialTokenRegistration(models.Model):
