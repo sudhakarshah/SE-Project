@@ -74,7 +74,7 @@ class Profile(models.Model):
 	)
 	role = models.CharField(max_length=200,choices=ROLE_CHOICES,default='CLINIC_MANAGER')
 	clinic_location = models.ForeignKey(ClinicLocation, on_delete=models.CASCADE, null=True)
-	forgot_password = models.BooleanField(default=False)
+	forgot_password_token = models.CharField(max_length=64, unique=True, null=True)
 
 	def create_profile(firstName, lastName, email, role, clinicName,  username, password):
 		user_details = Profile()
@@ -109,8 +109,8 @@ class Profile(models.Model):
 		user.save()
 		self.save()
 
-	def update_forgot_password(self):
-		self.forgot_password = not (self.forgot_password)
+	def update_forgot_password_token(self, token):
+		self.forgot_password_token = token
 		self.save()
 
 	def __str__(self):

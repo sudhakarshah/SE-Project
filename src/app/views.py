@@ -364,7 +364,8 @@ def forgot_password(request):
                 result['reason'] = "Incorrect matching email"
             else:
                 profile = Profile.objects.get(user=user)
-                profile.update_forgot_password()
+                unique_token = str(uuid.uuid3(uuid.NAMESPACE_DNS, user.email))
+                profile.update_forgot_password_token(unique_token)
                 result['success'] = True
                 result['pageLink'] = '/app'
         return HttpResponse(json.dumps(result), content_type="application/json")
