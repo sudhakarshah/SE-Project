@@ -13,6 +13,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 from itertools import permutations
+from django.db.models import Q
+
 from .models import *
 
 
@@ -301,29 +303,117 @@ def browse_to_be_processed(request):
 
 @csrf_exempt
 def browse_orders(request):
-	result = {
-		'success': False,
-		'reason': "",
-	}
-	if not request.user.is_authenticated:
-		result['reason'] = "request not authenticated"
-		print("not authenticated")
-		return HttpResponse(json.dumps(result), content_type="application/json")
+    result = {
+        'success': False,
+        'reason': "",
+    }
+    if not request.user.is_authenticated:
+        result['reason'] = "request not authenticated"
+        print("not authenticated")
+        return HttpResponse(json.dumps(result), content_type="application/json")
 
-	if request.session['role'] != 'CLINIC_MANAGER':
-		result['reason'] = "Only Clinic Manage can access"
-		return HttpResponse(json.dumps(result), content_type="application/json")
+    if request.session['role'] != 'CLINIC_MANAGER':
+        result['reason'] = "Only Clinic Manage can access"
+        return HttpResponse(json.dumps(result), content_type="application/json")
 
-	if request.method == 'POST':
-		orderId = request.POST['orderId']
-		Order.confirm_order_delivery(orderId)
-		result['success'] = True
-		return HttpResponse(json.dumps(result), content_type="application/json")
-	else:
-		orders = Order.objects.filter(status=Order.STATUS_CHOICES[3][0], ordering_clinic=ClinicLocation.objects.get(
-			name=request.session['clinicName'])).order_by('-priority')
-		template = loader.get_template('browse_orders/index.html')
-		context = {
-			'order_list': orders,
-		}
-		return HttpResponse(template.render(context, request))
+    if request.method == 'POST':
+        orderId = request.POST['orderId']
+        Order.confirm_order_delivery(orderId)
+        result['success'] = True
+        return HttpResponse(json.dumps(result), content_type="application/json")
+    else:
+        orders = Order.objects.filter(status=Order.STATUS_CHOICES[3][0], ordering_clinic=ClinicLocation.objects.get(
+            name=request.session['clinicName'])).order_by('-priority')
+        template = loader.get_template('browse_orders/index.html')
+        context = {
+            'order_list': orders,
+        }
+        return HttpResponse(template.render(context, request))
+
+@csrf_exempt
+def edit_profile(request):
+    result = {
+        'success': False,
+        'reason': "",
+        'pageLink': "",
+    }
+    if not request.user.is_authenticated:
+        result['reason'] = "request not authenticated"
+        print("not authenticated")
+        return HttpResponse(json.dumps(result), content_type="application/json")
+      
+    if request.method == 'POST':
+        password = request.POST['password']
+        profile = Profile.objects.get(user=request.user)
+        profile.update_details(request)
+        if request.POST['changePassword'] == "true":
+            if not request.user.check_password(password):
+                result['reason'] = "Old Password does not match"
+                print("Password does not match")
+                return HttpResponse(json.dumps(result), content_type="application/json")
+            else:
+                profile.update_password(request)
+        result['success'] = True
+        result['pageLink'] = '/app/home'
+        return HttpResponse(json.dumps(result), content_type="application/json")
+    else:
+        profile = Profile.objects.get(user=request.user)
+        template = loader.get_template('profile/index.html')
+        context = {
+            'user': request.user,
+            'profile': profile
+        }
+        return HttpResponse(template.render(context, request))
+
+@csrf_exempt
+def forgot_password(request):
+    if request.method == 'POST':
+        result = {
+            'success': False,
+            'reason': "",
+            'pageLink': "",
+        }
+        if not User.objects.filter(username=request.POST['username']).exists():
+            result['reason'] = "Username does not exist"
+        else:
+            user = User.objects.get(username=request.POST['username'])
+            if user.email != request.POST['email']:
+                result['reason'] = "Incorrect matching email"
+            else:
+                profile = Profile.objects.get(user=user)
+                unique_token = str(uuid.uuid3(uuid.NAMESPACE_DNS, user.email))
+                profile.update_forgot_password_token(unique_token)
+                result['success'] = True
+                result['pageLink'] = '/app'
+        return HttpResponse(json.dumps(result), content_type="application/json")
+    else:
+        return render(request, 'forgot_password/index.html')
+
+      
+def browse_undelivered_orders(request):
+    result = {
+        'success': False,
+        'reason': "",
+    }
+    if not request.user.is_authenticated:
+        result['reason'] = "request not authenticated"
+        print("not authenticated")
+        return HttpResponse(json.dumps(result), content_type="application/json")
+      
+    if request.session['role'] != 'CLINIC_MANAGER':
+        result['reason'] = "Only Clinic Manage can access"
+        return HttpResponse(json.dumps(result), content_type="application/json")
+
+    if request.method == 'POST':
+        orderId = request.POST['orderId']
+        Order.delete_order(orderId)
+        result['success'] = True
+        return HttpResponse(json.dumps(result), content_type="application/json")
+    else:
+        orders = Order.objects.filter(~Q(status=Order.STATUS_CHOICES[4][0]), ordering_clinic=ClinicLocation.objects.get(
+            name=request.session['clinicName'])).order_by('-priority')
+        template = loader.get_template('browse_undelivered_orders/index.html')
+        context = {
+            'order_list': orders,
+        }
+        return HttpResponse(template.render(context, request))

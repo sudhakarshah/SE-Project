@@ -82,6 +82,7 @@ class Profile(models.Model):
 	)
 	role = models.CharField(max_length=200,choices=ROLE_CHOICES,default='CLINIC_MANAGER')
 	clinic_location = models.ForeignKey(ClinicLocation, on_delete=models.CASCADE, null=True)
+	forgot_password_token = models.CharField(max_length=64, unique=True, null=True)
 
 	def create_profile(firstName, lastName, email, role, clinicName,  username, password):
 		user_details = Profile()
@@ -101,6 +102,24 @@ class Profile(models.Model):
 
 		user_details.clinic_location = clinicLocation
 		user_details.save()
+
+	def update_details(self, request):
+		user = request.user
+		user.email = request.POST['email']
+		user.save()
+		self.first_name = request.POST['firstName']
+		self.last_name = request.POST['lastName']
+		self.save()
+
+	def update_password(self, request):
+		user = request.user
+		user.set_password(request.POST['newPassword'])
+		user.save()
+		self.save()
+
+	def update_forgot_password_token(self, token):
+		self.forgot_password_token = token
+		self.save()
 
 	def __str__(self):
 		return self.first_name
@@ -155,6 +174,10 @@ class Order(models.Model):
 		order.priority = priority
 		order.save()
 		return order
+
+	def delete_order(id):
+		order = Order.objects.get(id=id)
+		order.delete()
 
 	def ready_to_process(id):
 		order = Order.objects.get(id=id)

@@ -1,4 +1,3 @@
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script>
 
 	$(document).ready(() => {
@@ -25,39 +24,19 @@
 			}
 		 });
 
-        $("#registerPage").click(() => {
-			window.location='/app/RegisterSendToken/';
-		});
-
-		$("#forgotPassword").click(() => {
-			window.location='/app/forgotPassword/';
-		});
-
-		$("#login").click((evt) => {
-			let username = $('#username').val();
-			let password = $('#password').val();
-			// incomplete form
-			if (!username || !password) {
-				console.log("fields not filled");
-				return;
-			}
+		$(".submitButton").click((evt) => {
+			let id = parseInt($(evt.target).attr('data-order-id'));
 			$.ajax({
 				type: 'POST',
-				url: '/app/',
+				url: '/app/BrowseUndeliveredOrders/',
 				traditional: true,
-				dataType: 'json',
+				dataType: 'html',
 				data: {
-				  username: username,
-					password: password,
+					orderId: id
 				},
 				success: (result) => {
-					console.log(result);
-					if (result.success) {
-							window.location = result.pageLink;
-					} else {
-					    alert("Login Unsuccessful");
-					    location.reload();
-					}
+					alert("Order Cancelled");
+					location.reload();
 				}
 			});
 		});
