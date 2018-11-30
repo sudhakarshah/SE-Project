@@ -172,6 +172,7 @@ def browse_items(request):
 	result['success'] = True
 	return HttpResponse(json.dumps(result), content_type="application/json")
 
+
 # Going through all permutations and finding the shortest one
 def find_shortest_path(list_of_clinics):
 	all_permutations = list(permutations(list_of_clinics))
@@ -179,8 +180,8 @@ def find_shortest_path(list_of_clinics):
 	minimum = 10000000;
 	for permutation in all_permutations:
 		temp = ClinicLocation.objects.get(id=permutation[0]).distance_from_supplying_hospital
-		for i in range(0,len(permutation)-1):
-			temp = temp + InterClinicDistance.get_distance(permutation[i],permutation[i+1])
+		for i in range(0, len(permutation) - 1):
+			temp = temp + InterClinicDistance.get_distance(permutation[i], permutation[i + 1])
 		temp = temp + ClinicLocation.objects.get(id=permutation[-1]).distance_from_supplying_hospital
 		# THIS HAS TO BE IMPLEMENTED
 		# To decide among itineraries of equal distance, AS-P should select the itinerary that delivers
@@ -191,6 +192,7 @@ def find_shortest_path(list_of_clinics):
 			smallest_route = permutation
 
 	return smallest_route
+
 
 def browse_to_be_loaded(request):
 	result = {
@@ -222,15 +224,16 @@ def browse_to_be_loaded(request):
 		smallest_route = find_shortest_path(clinics)
 
 		path = []
-		path.append(['Location','Latitude','Longitude','Altitude'])
+		path.append(['Location', 'Latitude', 'Longitude', 'Altitude'])
 		for clinic_id in smallest_route:
 			ordering_clinic = ClinicLocation.objects.get(id=clinic_id)
-			node = [ordering_clinic.name,ordering_clinic.latitute,ordering_clinic.longitute,ordering_clinic.altitude]
+			node = [ordering_clinic.name, ordering_clinic.latitute, ordering_clinic.longitute, ordering_clinic.altitude]
 			path.append(node)
 
 		# Adding the hospital as the last stop
 		supplying_hospital = ClinicLocation.objects.get(id=smallest_route[0]).supplying_hospital
-		supply_node = [supplying_hospital.name,supplying_hospital.latitute, supplying_hospital.longitute, supplying_hospital.altitude]
+		supply_node = [supplying_hospital.name, supplying_hospital.latitute, supplying_hospital.longitute,
+					   supplying_hospital.altitude]
 		path.append(supply_node)
 
 		# Creating CSV file and updating location
@@ -303,117 +306,141 @@ def browse_to_be_processed(request):
 
 @csrf_exempt
 def browse_orders(request):
-    result = {
-        'success': False,
-        'reason': "",
-    }
-    if not request.user.is_authenticated:
-        result['reason'] = "request not authenticated"
-        print("not authenticated")
-        return HttpResponse(json.dumps(result), content_type="application/json")
+	result = {
+		'success': False,
+		'reason': "",
+	}
+	if not request.user.is_authenticated:
+		result['reason'] = "request not authenticated"
+		print("not authenticated")
+		return HttpResponse(json.dumps(result), content_type="application/json")
 
-    if request.session['role'] != 'CLINIC_MANAGER':
-        result['reason'] = "Only Clinic Manage can access"
-        return HttpResponse(json.dumps(result), content_type="application/json")
+	if request.session['role'] != 'CLINIC_MANAGER':
+		result['reason'] = "Only Clinic Manage can access"
+		return HttpResponse(json.dumps(result), content_type="application/json")
 
-    if request.method == 'POST':
-        orderId = request.POST['orderId']
-        Order.confirm_order_delivery(orderId)
-        result['success'] = True
-        return HttpResponse(json.dumps(result), content_type="application/json")
-    else:
-        orders = Order.objects.filter(status=Order.STATUS_CHOICES[3][0], ordering_clinic=ClinicLocation.objects.get(
-            name=request.session['clinicName'])).order_by('-priority')
-        template = loader.get_template('browse_orders/index.html')
-        context = {
-            'order_list': orders,
-        }
-        return HttpResponse(template.render(context, request))
+	if request.method == 'POST':
+		orderId = request.POST['orderId']
+		Order.confirm_order_delivery(orderId)
+		result['success'] = True
+		return HttpResponse(json.dumps(result), content_type="application/json")
+	else:
+		orders = Order.objects.filter(status=Order.STATUS_CHOICES[3][0], ordering_clinic=ClinicLocation.objects.get(
+			name=request.session['clinicName'])).order_by('-priority')
+		template = loader.get_template('browse_orders/index.html')
+		context = {
+			'order_list': orders,
+		}
+		return HttpResponse(template.render(context, request))
+
 
 @csrf_exempt
 def edit_profile(request):
-    result = {
-        'success': False,
-        'reason': "",
-        'pageLink': "",
-    }
-    if not request.user.is_authenticated:
-        result['reason'] = "request not authenticated"
-        print("not authenticated")
-        return HttpResponse(json.dumps(result), content_type="application/json")
-      
-    if request.method == 'POST':
-        password = request.POST['password']
-        profile = Profile.objects.get(user=request.user)
-        profile.update_details(request)
-        if request.POST['changePassword'] == "true":
-            if not request.user.check_password(password):
-                result['reason'] = "Old Password does not match"
-                print("Password does not match")
-                return HttpResponse(json.dumps(result), content_type="application/json")
-            else:
-                profile.update_password(request)
-        result['success'] = True
-        result['pageLink'] = '/app/home'
-        return HttpResponse(json.dumps(result), content_type="application/json")
-    else:
-        profile = Profile.objects.get(user=request.user)
-        template = loader.get_template('profile/index.html')
-        context = {
-            'user': request.user,
-            'profile': profile
-        }
-        return HttpResponse(template.render(context, request))
+	result = {
+		'success': False,
+		'reason': "",
+		'pageLink': "",
+	}
+	if not request.user.is_authenticated:
+		result['reason'] = "request not authenticated"
+		print("not authenticated")
+		return HttpResponse(json.dumps(result), content_type="application/json")
+
+	if request.method == 'POST':
+		password = request.POST['password']
+		profile = Profile.objects.get(user=request.user)
+		profile.update_details(request)
+		if request.POST['changePassword'] == "true":
+			if not request.user.check_password(password):
+				result['reason'] = "Old Password does not match"
+				print("Password does not match")
+				return HttpResponse(json.dumps(result), content_type="application/json")
+			else:
+				profile.update_password(request.user, request.POST['newPassword'])
+		result['success'] = True
+		result['pageLink'] = '/app/home'
+		return HttpResponse(json.dumps(result), content_type="application/json")
+	else:
+		profile = Profile.objects.get(user=request.user)
+		template = loader.get_template('profile/index.html')
+		context = {
+			'user': request.user,
+			'profile': profile
+		}
+		return HttpResponse(template.render(context, request))
+
 
 @csrf_exempt
 def forgot_password(request):
-    if request.method == 'POST':
-        result = {
-            'success': False,
-            'reason': "",
-            'pageLink': "",
-        }
-        if not User.objects.filter(username=request.POST['username']).exists():
-            result['reason'] = "Username does not exist"
-        else:
-            user = User.objects.get(username=request.POST['username'])
-            if user.email != request.POST['email']:
-                result['reason'] = "Incorrect matching email"
-            else:
-                profile = Profile.objects.get(user=user)
-                unique_token = str(uuid.uuid3(uuid.NAMESPACE_DNS, user.email))
-                profile.update_forgot_password_token(unique_token)
-                result['success'] = True
-                result['pageLink'] = '/app'
-        return HttpResponse(json.dumps(result), content_type="application/json")
-    else:
-        return render(request, 'forgot_password/index.html')
+	if request.method == 'POST':
+		result = {
+			'success': False,
+			'reason': "",
+			'pageLink': "",
+		}
+		if not User.objects.filter(username=request.POST['username']).exists():
+			result['reason'] = "Username does not exist"
+		else:
+			user = User.objects.get(username=request.POST['username'])
+			if user.email != request.POST['email']:
+				result['reason'] = "Incorrect matching email"
+			else:
+				profile = Profile.objects.get(user=user)
+				unique_token = str(uuid.uuid3(uuid.NAMESPACE_DNS, user.email))
+				profile.update_forgot_password_token(unique_token)
+				result['success'] = True
+				result['pageLink'] = '/app'
+		return HttpResponse(json.dumps(result), content_type="application/json")
+	else:
+		return render(request, 'forgot_password/index.html')
 
-      
+
+@csrf_exempt
+def enter_new_password(request):
+	result = {
+		'success': False,
+		'reason': "",
+		'pageLink': "/app",
+	}
+	if request.method == 'POST':
+		token_id = request.POST['token']
+		print(token_id)
+		if not Profile.objects.filter(forgot_password_token=token_id).exists():
+			result['reason'] = "Token Does not exist"
+		else:
+			profile = Profile.objects.get(forgot_password_token=token_id)
+			profile.update_password(profile.user, request.POST['password'])
+			profile.update_forgot_password_token("")
+			result['success'] = True
+		return HttpResponse(json.dumps(result), content_type="application/json")
+	else:
+		return render(request, 'enter_new_password/index.html')
+
+
 def browse_undelivered_orders(request):
-    result = {
-        'success': False,
-        'reason': "",
-    }
-    if not request.user.is_authenticated:
-        result['reason'] = "request not authenticated"
-        print("not authenticated")
-        return HttpResponse(json.dumps(result), content_type="application/json")
-      
-    if request.session['role'] != 'CLINIC_MANAGER':
-        result['reason'] = "Only Clinic Manage can access"
-        return HttpResponse(json.dumps(result), content_type="application/json")
+	result = {
+		'success': False,
+		'reason': "",
+	}
+	if not request.user.is_authenticated:
+		result['reason'] = "request not authenticated"
+		print("not authenticated")
+		return HttpResponse(json.dumps(result), content_type="application/json")
 
-    if request.method == 'POST':
-        orderId = request.POST['orderId']
-        Order.delete_order(orderId)
-        result['success'] = True
-        return HttpResponse(json.dumps(result), content_type="application/json")
-    else:
-        orders = Order.objects.filter(~Q(status=Order.STATUS_CHOICES[4][0]), ordering_clinic=ClinicLocation.objects.get(
-            name=request.session['clinicName'])).order_by('-priority')
-        template = loader.get_template('browse_undelivered_orders/index.html')
-        context = {
-            'order_list': orders,
-        }
-        return HttpResponse(template.render(context, request))
+	if request.session['role'] != 'CLINIC_MANAGER':
+		result['reason'] = "Only Clinic Manage can access"
+		return HttpResponse(json.dumps(result), content_type="application/json")
+
+	if request.method == 'POST':
+		orderId = request.POST['orderId']
+		Order.delete_order(orderId)
+		result['success'] = True
+		return HttpResponse(json.dumps(result), content_type="application/json")
+	else:
+		orders = Order.objects.filter(~Q(status=Order.STATUS_CHOICES[4][0]), ordering_clinic=ClinicLocation.objects.get(
+			name=request.session['clinicName'])).order_by('-priority')
+		template = loader.get_template('browse_undelivered_orders/index.html')
+		context = {
+			'order_list': orders,
+		}
+		return HttpResponse(template.render(context, request))

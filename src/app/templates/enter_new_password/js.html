@@ -1,0 +1,62 @@
+<script>
+
+	$(document).ready(() => {
+
+		$.ajaxSetup({
+			beforeSend: (xhr, settings) => {
+				function getCookie(name) {
+					var cookieValue = null;
+					if (document.cookie && document.cookie != '') {
+						var cookies = document.cookie.split(';');
+						for (var i = 0; i < cookies.length; i++) {
+							var cookie = jQuery.trim(cookies[i]);
+							if (cookie.substring(0, name.length + 1) == (name + '=')) {
+								cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+								break;
+							}
+						}
+					}
+					return cookieValue;
+				}
+				if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+					xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+				}
+			}
+		 });
+
+		$("#submit").click((evt) => {
+			let password = $('#password').val();
+			let reEnterPassword = $('#reEnterPassword').val();
+			let searchParams = new URLSearchParams(window.location.search)
+			let token = searchParams.get('token')
+
+            console.log(token)
+			if (password != reEnterPassword) {
+				alert('passwords doesnt match');
+				return;
+			}
+
+			$.ajax({
+				type: 'POST',
+				url: '/app/enterNewPassword/',
+				traditional: true,
+				dataType: 'html',
+				data: {
+					password: password,
+					token: token,
+				},
+				success: (result) => {
+					result = JSON.parse(result);
+					if (result.success) {
+						alert("Password Changed!");
+						window.location = result.pageLink;
+					} else {
+						alert(result.reason);
+						window.location = result.pageLink;
+					}
+				}
+			});
+		});
+	});
+
+</script>
