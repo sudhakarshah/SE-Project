@@ -43,13 +43,15 @@ def signin(request):
 		else:
 			return HttpResponse(json.dumps(result), content_type="application/json")
 	else:
+		if request.user.is_authenticated:
+			return redirect('/app/home')
 		return render(request, 'signin/index.html')
 
 
 @csrf_exempt
 def signout(request):
 	logout(request)
-	return render(request, 'signin/index.html')
+	return redirect('/app')
 
 
 @csrf_exempt
