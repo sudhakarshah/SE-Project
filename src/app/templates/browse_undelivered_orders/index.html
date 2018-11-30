@@ -35,7 +35,9 @@
 						<td>{{ order.get_priority_display }}</td>
 						<td>{{ order.status }}</td>
 						<td>{{ order.date_order_placed }}</td>
+						{% if order.status == "QUEUED_FOR_PROCESSING" %}
 						<td><input class="submitButton btn btn-primary" type="submit" value="Cancel Order" data-order-id='{{ order.id }}'/></td>
+						{% endif %}
 					</tr>
 				{% endfor %}
 			</tbody>
