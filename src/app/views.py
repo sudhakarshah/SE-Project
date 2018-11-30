@@ -43,7 +43,7 @@ def signin(request):
 		else:
 			return HttpResponse(json.dumps(result), content_type="application/json")
 	else:
-		if request.user.is_authenticated:
+		if request.user.is_authenticated and 'role' in request.session:
 			return redirect('/app/home')
 		return render(request, 'signin/index.html')
 
