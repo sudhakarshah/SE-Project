@@ -4,7 +4,7 @@ import io
 from io import BytesIO
 import uuid
 
-import simplejson as simplejson
+# import simplejson as simplejson
 from django.template import loader
 from reportlab.pdfgen import canvas
 from django.shortcuts import render, redirect
