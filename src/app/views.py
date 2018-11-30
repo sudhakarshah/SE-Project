@@ -43,18 +43,20 @@ def signin(request):
 		else:
 			return HttpResponse(json.dumps(result), content_type="application/json")
 	else:
+		if request.user.is_authenticated and 'role' in request.session:
+			return redirect('/app/home')
 		return render(request, 'signin/index.html')
 
 
 @csrf_exempt
 def signout(request):
 	logout(request)
-	return render(request, 'signin/index.html')
+	return redirect('/app')
 
 
 @csrf_exempt
 def home(request):
-	if not request.user.is_authenticated:
+	if not request.user.is_authenticated or 'role' not in request.session:
 		return redirect('/app')
 
 	if request.session['role'] == 'CLINIC_MANAGER':
@@ -217,7 +219,8 @@ def browse_to_be_loaded(request):
 			if current_order.ordering_clinic.id not in clinics:
 				clinics.append(current_order.ordering_clinic.id)
 			Order.loaded_into_drone(order_id, shipment)
-
+			print(Profile.objects.get(clinic_location=current_order.ordering_clinic).user.email, "order id ", order_id , " is dispatched")
+			print(current_order.shipping_label_location, "is the shipping label pdf name")
 		smallest_route = find_shortest_path(clinics)
 
 		path = []
@@ -293,6 +296,12 @@ def browse_to_be_processed(request):
 		p.save()
 		pdf = buffer.getvalue()
 		buffer.close()
+        # saving pdf in db
+		file_name = "label" + str(orderId) + ".pdf"
+		Order.update_shipping_label(orderId, file_name)
+		with open(file_name, 'wb') as writeFile:
+			writeFile.write(pdf)
+		writeFile.close()
 		response.write(pdf)
 		return response
 	else:
