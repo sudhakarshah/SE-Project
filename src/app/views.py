@@ -58,7 +58,6 @@ def home(request):
 		return redirect('/app')
 
 	if request.session['role'] == 'CLINIC_MANAGER':
-		# browse_items(request)
 		clinicName = request.session['clinicName']
 		items = Item.objects.all()
 		Categories = Category.objects.all()
@@ -76,10 +75,8 @@ def home(request):
 			'pack_order_list': packOrders,
 		}
 		return render(request, 'browse_orders_warehouse/index.html', context)
-	# browse_to_be_loaded(request)
 
 	elif request.session['role'] == 'DISPATCHER':
-		# browse_to_be_processed(request)
 		orders = Order.objects.filter(status=Order.STATUS_CHOICES[2][0]).order_by('-priority')
 		context = {
 			'order_list': orders,
@@ -133,7 +130,7 @@ def register_send_token(request):
 		email = request.POST['email']
 		role = request.POST['role_choices']
 		unique_token = str(uuid.uuid3(uuid.NAMESPACE_DNS, email))
-		print("http://localhost:8000/app/registration?token=" + unique_token)
+		print("http://localhost:8000/app/registration?token=" + unique_token + " send to " + email)
 		register_token_instance = InitialTokenRegistration.create(unique_token, email, role)
 		# send email and check if create in db is successful. If not then make result['success'] = false
 		if True:
@@ -388,6 +385,7 @@ def forgot_password(request):
 				profile = Profile.objects.get(user=user)
 				unique_token = str(uuid.uuid3(uuid.NAMESPACE_DNS, user.email))
 				profile.update_forgot_password_token(unique_token)
+				print("http://localhost:8000/app/enterNewPassword?token=" + unique_token + " send to " + profile.user.email)
 				result['success'] = True
 				result['pageLink'] = '/app'
 		return HttpResponse(json.dumps(result), content_type="application/json")
@@ -404,13 +402,12 @@ def enter_new_password(request):
 	}
 	if request.method == 'POST':
 		token_id = request.POST['token']
-		print(token_id)
 		if not Profile.objects.filter(forgot_password_token=token_id).exists():
 			result['reason'] = "Token Does not exist"
 		else:
 			profile = Profile.objects.get(forgot_password_token=token_id)
 			profile.update_password(profile.user, request.POST['password'])
-			profile.update_forgot_password_token("")
+			profile.update_forgot_password_token(None)
 			result['success'] = True
 		return HttpResponse(json.dumps(result), content_type="application/json")
 	else:
