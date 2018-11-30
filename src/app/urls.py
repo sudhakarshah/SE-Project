@@ -8,7 +8,6 @@ urlpatterns = [
     path('OrdersToBeLoaded/', views.browse_to_be_loaded),
     path('registration/', views.register_details),
     path('OrdersToBeProcessed/', views.browse_to_be_processed),
-	path('ConfirmOrderDelivery/', views.browse_orders),
 	path('BrowseUndeliveredOrders/', views.browse_undelivered_orders),
 	path('home/', views.home),
     path('forgotPassword/', views.forgot_password),

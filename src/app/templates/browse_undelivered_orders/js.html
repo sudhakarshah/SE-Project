@@ -24,18 +24,39 @@
 			}
 		 });
 
-		$(".submitButton").click((evt) => {
+		$("#cancel").click((evt) => {
 			let id = parseInt($(evt.target).attr('data-order-id'));
+			let task = "Cancel";
 			$.ajax({
 				type: 'POST',
 				url: '/app/BrowseUndeliveredOrders/',
 				traditional: true,
 				dataType: 'html',
 				data: {
-					orderId: id
+					orderId: id,
+					task: task,
 				},
 				success: (result) => {
 					alert("Order Cancelled");
+					location.reload();
+				}
+			});
+		});
+
+		$("#confirm").click((evt) => {
+			let id = parseInt($(evt.target).attr('data-order-id'));
+			let task = "Confirm";
+			$.ajax({
+				type: 'POST',
+				url: '/app/BrowseUndeliveredOrders/',
+				traditional: true,
+				dataType: 'html',
+				data: {
+					orderId: id,
+					task: task,
+				},
+				success: (result) => {
+					alert("Order Confirmed");
 					location.reload();
 				}
 			});
