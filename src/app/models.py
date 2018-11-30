@@ -163,6 +163,7 @@ class Order(models.Model):
 	date_order_dispatched = models.DateTimeField(blank=True, null=True)
 	date_order_delivered = models.DateTimeField(blank=True, null=True)
 	items = models.ManyToManyField(Item, through='OrderedItem')
+	shipping_label_location = models.CharField(max_length=200, null=True)
 	shipment = models.ForeignKey(Shipment, on_delete=models.CASCADE, null=True)
 
 	def create_order(totalWeight, orderingClinic, supplyingHospital, priority):
@@ -200,6 +201,12 @@ class Order(models.Model):
 		order.status = Order.STATUS_CHOICES[4][0]
 		order.date_order_delivered = timezone.now()
 		order.save()
+
+	def update_shipping_label(id, location):
+		order = Order.objects.get(id=id)
+		order.shipping_label_location = location
+		order.save()
+
 
 class OrderedItem(models.Model):
 	order = models.ForeignKey(Order, on_delete=models.CASCADE, null=True)
