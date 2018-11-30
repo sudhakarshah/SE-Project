@@ -6,63 +6,64 @@
   <BODY>
 		{% include 'browse_items/js.html' %}
 		{% include 'browse_items/css.html' %}
-	<div id = "heading">
-		<h2 id="mainHeading">Browse Items And Select</h2>
-		<button id="viewProfile" type="button" name="viewProfile" class="btn btn-primary"> Edit Profile </button>
-		<button id="viewOrdersButton" type="button" name="viewOrders" class="btn btn-primary"> View Dispatched Orders </button>
-		<h5>Clinic: {{ clinic_name }}</h5>
-	</div>
-	<br/>
-	<table class="table">
-		<thead class="thead-dark">
-			<tr>
-				<th scope="col"></th>
-				<th scope="col">ID</th>
-				<th scope="col">Name</th>
-				<th scope="col">Category</th>
-				<th scope="col">Weight</th>
-				<th scope="col">Image</th>
-			</tr>
-		</thead>
-		<tbody>
-			{% for item in item_list %}
-				<tr>
-					<td><input type="checkbox" id="{{ item.id }}" data-name="{{ item.name }}" data-weight='{{ item.weight }}'/></td>
-					<td>{{ item.id }}</td>
-					<td>{{ item.name }}</td>
-					<td>{{ item.category.name }}</td>
-					<td>{{ item.weight }} kg</td>
-					<td><img src="http://localhost:8000/static/{{item.image}}" height="80" width="80"></td>
-				</tr>
-			{% endfor %}
-		</tbody>
-	</table>
-
-	<br>
-
-	<div id="cart" >
-		<h2>Cart</h2>
-	</div>
-
-	<br>
-	<div id="showWeight">
-		Maximum weight is 23.8 kg.<br>
-		<p id="currentWeight"></p>
-	</div>
-
-	<br>
-
-	<div class="show">
-		<label>Select Priority:</label>
-		<select id="priority_select" class="form-control">
-			<option value="3">HIGH</option>
-			<option value="2">MEDIUM</option>
-			<option value="1">LOW</option>
-		</select>
+		{% include 'sections/navBar/index.html' %}
+		<div id = "heading">
+			<h2 id="mainHeading">Browse Items And Select</h2>
+			<button id="viewProfile" type="button" name="viewProfile" class="btn btn-primary"> Edit Profile </button>
+			<button id="viewOrdersButton" type="button" name="viewOrders" class="btn btn-primary"> View Dispatched Orders </button>
+			<h5>Clinic: {{ clinic_name }}</h5>
+		</div>
 		<br/>
-		<input id="submitButton" type="submit" value="Submit" class="btn btn-success" />
-	</div>
-	<p id="warning" class="hide p-3 mb-2 bg-danger text-white">Your weight exceeds the Maximum loading capacity of the drone</p>
+		<table class="table">
+			<thead class="thead-dark">
+				<tr>
+					<th scope="col"></th>
+					<th scope="col">ID</th>
+					<th scope="col">Name</th>
+					<th scope="col">Category</th>
+					<th scope="col">Weight</th>
+					<th scope="col">Image</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for item in item_list %}
+					<tr>
+						<td><input type="checkbox" id="{{ item.id }}" data-name="{{ item.name }}" data-weight='{{ item.weight }}'/></td>
+						<td>{{ item.id }}</td>
+						<td>{{ item.name }}</td>
+						<td>{{ item.category.name }}</td>
+						<td>{{ item.weight }} kg</td>
+						<td><img src="http://localhost:8000/static/{{item.image}}" height="80" width="80"></td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
 
-  </BODY>
+		<br>
+
+		<div id="cart" >
+			<h2>Cart</h2>
+		</div>
+
+		<br>
+		<div id="showWeight">
+			Maximum weight is 23.8 kg.<br>
+			<p id="currentWeight"></p>
+		</div>
+
+		<br>
+
+		<div class="show">
+			<label>Select Priority:</label>
+			<select id="priority_select" class="form-control">
+				<option value="3">HIGH</option>
+				<option value="2">MEDIUM</option>
+				<option value="1">LOW</option>
+			</select>
+			<br/>
+			<input id="submitButton" type="submit" value="Submit" class="btn btn-success" />
+		</div>
+		<p id="warning" class="hide p-3 mb-2 bg-danger text-white">Your weight exceeds the Maximum loading capacity of the drone</p>
+
+	</BODY>
 </HTML>
