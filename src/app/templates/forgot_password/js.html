@@ -27,9 +27,8 @@
 
 		$("#forgotPassword").click((evt) => {
 			let username = $('#username').val();
-			let email = $('#email').val();
 			// incomplete form
-			if (!username || !email) {
+			if (!username) {
 				console.log("Fields not filled");
 				return;
 			}
@@ -40,7 +39,7 @@
 				dataType: 'json',
 				data: {
 				    username: username,
-					email: email,
+					// email: email,
 				},
 				success: (result) => {
 					console.log(result);
