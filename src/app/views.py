@@ -18,6 +18,9 @@ from django.db.models import Q
 from .models import *
 
 
+def isAuthenticated(request):
+	return request.user.is_authenticated and 'role' in request.session
+
 @csrf_exempt
 def signin(request):
 	if request.method == 'POST':
@@ -30,7 +33,6 @@ def signin(request):
 		user = authenticate(username=username, password=password)
 		if user is not None:
 			print("user authenticated\n")
-			result['success'] = True
 			login(request, user)
 			# Authenticated
 			profile = Profile.objects.get(user=user)
@@ -39,11 +41,12 @@ def signin(request):
 			request.session['role'] = profile.role
 			if (profile.role == "CLINIC_MANAGER"):
 				request.session['clinicName'] = ClinicLocation.objects.get(id=profile.clinic_location.id).name
+			result['success'] = True
 			return HttpResponse(json.dumps(result), content_type="application/json")
 		else:
 			return HttpResponse(json.dumps(result), content_type="application/json")
 	else:
-		if request.user.is_authenticated and 'role' in request.session:
+		if isAuthenticated(request):
 			return redirect('/app/home')
 		return render(request, 'signin/index.html')
 
@@ -56,7 +59,7 @@ def signout(request):
 
 @csrf_exempt
 def home(request):
-	if not request.user.is_authenticated or 'role' not in request.session:
+	if not isAuthenticated(request):
 		return redirect('/app')
 
 	if request.session['role'] == 'CLINIC_MANAGER':
@@ -88,11 +91,12 @@ def home(request):
 
 @csrf_exempt
 def register_details(request):
+	result = {
+		'success': False,
+		'reason': '',
+	}
 	if request.method == 'POST':
-		result = {
-			'success': True,
-			'reason': '',
-		}
+
 		firstName = request.POST['firstName']
 		lastName = request.POST['lastName']
 		email = request.POST['email']
@@ -105,10 +109,17 @@ def register_details(request):
 		register_user_instance = Profile.create_profile(firstName, lastName, email, role, clinicName, username,
 														password)
 		result['pageLink'] = '/app'
+		result['success'] = True
 		return HttpResponse(json.dumps(result), content_type="application/json")
 	else:
 		token_id = request.GET['token']
-		initial_registration_data = InitialTokenRegistration.objects.get(unique_token=token_id)
+		initial_registration_data = None
+		try:
+			initial_registration_data = InitialTokenRegistration.objects.get(unique_token=token_id)
+		except InitialTokenRegistration.DoesNotExist:
+			result['reason'] = 'incorrect token'
+			return HttpResponse(json.dumps(result), content_type="application/json")
+
 		clinics = ClinicLocation.objects.all()
 		need_clinic_location = False
 		# Will only need clinic location if they are a clinic manager
@@ -124,24 +135,25 @@ def register_details(request):
 
 @csrf_exempt
 def register_send_token(request):
-	if request.method == 'POST':
-		result = {
-			'success': False,
-			'reason': '',
-		}
-		email = request.POST['email']
-		role = request.POST['role_choices']
-		unique_token = str(uuid.uuid3(uuid.NAMESPACE_DNS, email))
-		print("http://localhost:8000/app/registration?token=" + unique_token + " send to " + email)
-		register_token_instance = InitialTokenRegistration.create(unique_token, email, role)
-		# send email and check if create in db is successful. If not then make result['success'] = false
-		if True:
-			result['success'] = True
-		else:
-			result['reason'] = 'reason'
-		return HttpResponse(json.dumps(result), content_type="application/json")
-	else:
+	if request.method != 'POST':
 		return render(request, 'register_send_token/index.html')
+
+	result = {
+		'success': False,
+		'reason': '',
+	}
+	email = request.POST['email']
+	role = request.POST['role_choices']
+	unique_token = str(uuid.uuid3(uuid.NAMESPACE_DNS, email))
+	print("http://localhost:8000/app/registration?token=" + unique_token + " send to " + email)
+	register_token_instance = InitialTokenRegistration.create(unique_token, email, role)
+	# send email and check if create in db is successful. If not then make result['success'] = false
+	if True:
+		result['success'] = True
+	else:
+		result['reason'] = 'reason'
+	return HttpResponse(json.dumps(result), content_type="application/json")
+
 
 
 def browse_items(request):
@@ -149,9 +161,8 @@ def browse_items(request):
 		'success': False,
 		'reason': "",
 	}
-	if not request.user.is_authenticated:
-		result['reason'] = "request not authenticated"
-		return HttpResponse(json.dumps(result), content_type="application/json")
+	if not isAuthenticated(request):
+		return redirect('/app')
 
 	if request.method != 'POST':
 		result['reason'] = "Invalid request"
@@ -198,9 +209,8 @@ def browse_to_be_loaded(request):
 		'success': False,
 		'reason': "",
 	}
-	if not request.user.is_authenticated:
-		result['reason'] = "request not authenticated"
-		return HttpResponse(json.dumps(result), content_type="application/json")
+	if not isAuthenticated(request):
+		return redirect('/app')
 
 	if request.method != 'POST':
 		result['reason'] = "Invalid request"
@@ -262,10 +272,8 @@ def browse_to_be_processed(request):
 		'success': False,
 		'reason': "",
 	}
-	if not request.user.is_authenticated:
-		result['reason'] = "request not authenticated"
-		print("not authenticated")
-		return HttpResponse(json.dumps(result), content_type="application/json")
+	if not isAuthenticated(request):
+		return redirect('/app')
 
 	if request.method != 'POST':
 		result['reason'] = "Invalid request"
@@ -317,10 +325,8 @@ def edit_profile(request):
 		'reason': "",
 		'pageLink': "",
 	}
-	if not request.user.is_authenticated:
-		result['reason'] = "request not authenticated"
-		print("not authenticated")
-		return HttpResponse(json.dumps(result), content_type="application/json")
+	if not isAuthenticated(request):
+		return redirect('/app')
 
 	if request.method == 'POST':
 		password = request.POST['password']
@@ -348,28 +354,29 @@ def edit_profile(request):
 
 @csrf_exempt
 def forgot_password(request):
-	if request.method == 'POST':
-		result = {
-			'success': False,
-			'reason': "",
-			'pageLink': "",
-		}
-		if not User.objects.filter(username=request.POST['username']).exists():
-			result['reason'] = "Username does not exist"
-		else:
-			user = User.objects.get(username=request.POST['username'])
-			if user.email != request.POST['email']:
-				result['reason'] = "Incorrect matching email"
-			else:
-				profile = Profile.objects.get(user=user)
-				unique_token = str(uuid.uuid3(uuid.NAMESPACE_DNS, user.email))
-				profile.update_forgot_password_token(unique_token)
-				print("http://localhost:8000/app/enterNewPassword?token=" + unique_token + " send to " + profile.user.email)
-				result['success'] = True
-				result['pageLink'] = '/app'
-		return HttpResponse(json.dumps(result), content_type="application/json")
-	else:
+	if request.method != 'POST':
 		return render(request, 'forgot_password/index.html')
+
+	result = {
+		'success': False,
+		'reason': "",
+		'pageLink': "",
+	}
+	if not User.objects.filter(username=request.POST['username']).exists():
+		result['reason'] = "Username does not exist"
+	else:
+		user = User.objects.get(username=request.POST['username'])
+		if user.email != request.POST['email']:
+			result['reason'] = "Incorrect matching email"
+		else:
+			profile = Profile.objects.get(user=user)
+			unique_token = str(uuid.uuid3(uuid.NAMESPACE_DNS, user.email))
+			profile.update_forgot_password_token(unique_token)
+			print("http://localhost:8000/app/enterNewPassword?token=" + unique_token + " send to " + profile.user.email)
+			result['success'] = True
+			result['pageLink'] = '/app'
+	return HttpResponse(json.dumps(result), content_type="application/json")
+
 
 
 @csrf_exempt
@@ -379,18 +386,19 @@ def enter_new_password(request):
 		'reason': "",
 		'pageLink': "/app",
 	}
-	if request.method == 'POST':
-		token_id = request.POST['token']
-		if not Profile.objects.filter(forgot_password_token=token_id).exists():
-			result['reason'] = "Token Does not exist"
-		else:
-			profile = Profile.objects.get(forgot_password_token=token_id)
-			profile.update_password(profile.user, request.POST['password'])
-			profile.update_forgot_password_token(None)
-			result['success'] = True
-		return HttpResponse(json.dumps(result), content_type="application/json")
-	else:
+	if request.method != 'POST':
 		return render(request, 'enter_new_password/index.html')
+
+	token_id = request.POST['token']
+	if not Profile.objects.filter(forgot_password_token=token_id).exists():
+		result['reason'] = "Token Does not exist"
+	else:
+		profile = Profile.objects.get(forgot_password_token=token_id)
+		profile.update_password(profile.user, request.POST['password'])
+		profile.update_forgot_password_token(None)
+		result['success'] = True
+	return HttpResponse(json.dumps(result), content_type="application/json")
+
 
 @csrf_exempt
 def browse_undelivered_orders(request):
@@ -398,10 +406,10 @@ def browse_undelivered_orders(request):
 		'success': False,
 		'reason': "",
 	}
-	if not request.user.is_authenticated:
+	if not isAuthenticated(request):
 		result['reason'] = "request not authenticated"
 		print("not authenticated")
-		return HttpResponse(json.dumps(result), content_type="application/json")
+		return redirect('/app')
 
 	if request.session['role'] != 'CLINIC_MANAGER':
 		result['reason'] = "Only Clinic Manage can access"

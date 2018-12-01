@@ -24,7 +24,7 @@
 			}
 		 });
 
-		$("#cancel").click((evt) => {
+		$(".cancel").click((evt) => {
 			let id = parseInt($(evt.target).attr('data-order-id'));
 			let task = "Cancel";
 			$.ajax({
@@ -43,7 +43,7 @@
 			});
 		});
 
-		$("#confirm").click((evt) => {
+		$(".confirm").click((evt) => {
 			let id = parseInt($(evt.target).attr('data-order-id'));
 			let task = "Confirm";
 			$.ajax({

@@ -36,9 +36,9 @@
 						<td>{{ order.status }}</td>
 						<td>{{ order.date_order_placed }}</td>
 						{% if order.status == "QUEUED_FOR_PROCESSING" %}
-						<td><input id="cancel" class="submitButton btn btn-primary" type="submit" value="Cancel Order" data-order-id='{{ order.id }}'/></td>
+						<td><input class="cancel btn btn-primary" type="submit" value="Cancel Order" data-order-id='{{ order.id }}'/></td>
 						{% elif order.status == "DISPATCHED" %}
-						<td><input id="confirm" class="submitButton btn btn-primary" type="submit" value="Confirm Delivery" data-order-id='{{ order.id }}'/></td>
+						<td><input class="confirm btn btn-primary" type="submit" value="Confirm Delivery" data-order-id='{{ order.id }}'/></td>
 						{% endif %}
 					</tr>
 				{% endfor %}
