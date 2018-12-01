@@ -311,36 +311,6 @@ def browse_to_be_processed(request):
 
 
 @csrf_exempt
-def browse_orders(request):
-	result = {
-		'success': False,
-		'reason': "",
-	}
-	if not request.user.is_authenticated:
-		result['reason'] = "request not authenticated"
-		print("not authenticated")
-		return HttpResponse(json.dumps(result), content_type="application/json")
-
-	if request.session['role'] != 'CLINIC_MANAGER':
-		result['reason'] = "Only Clinic Manage can access"
-		return HttpResponse(json.dumps(result), content_type="application/json")
-
-	if request.method == 'POST':
-		orderId = request.POST['orderId']
-		Order.confirm_order_delivery(orderId)
-		result['success'] = True
-		return HttpResponse(json.dumps(result), content_type="application/json")
-	else:
-		orders = Order.objects.filter(status=Order.STATUS_CHOICES[3][0], ordering_clinic=ClinicLocation.objects.get(
-			name=request.session['clinicName'])).order_by('-priority')
-		template = loader.get_template('browse_orders/index.html')
-		context = {
-			'order_list': orders,
-		}
-		return HttpResponse(template.render(context, request))
-
-
-@csrf_exempt
 def edit_profile(request):
 	result = {
 		'success': False,
@@ -422,7 +392,7 @@ def enter_new_password(request):
 	else:
 		return render(request, 'enter_new_password/index.html')
 
-
+@csrf_exempt
 def browse_undelivered_orders(request):
 	result = {
 		'success': False,
@@ -439,8 +409,12 @@ def browse_undelivered_orders(request):
 
 	if request.method == 'POST':
 		orderId = request.POST['orderId']
-		Order.delete_order(orderId)
-		result['success'] = True
+		if request.POST['task'] == "Cancel":
+			Order.delete_order(orderId)
+			result['success'] = True
+		elif request.POST['task'] == "Confirm":
+			Order.confirm_order_delivery(orderId)
+			result['success'] = True
 		return HttpResponse(json.dumps(result), content_type="application/json")
 	else:
 		orders = Order.objects.filter(~Q(status=Order.STATUS_CHOICES[4][0]), ordering_clinic=ClinicLocation.objects.get(

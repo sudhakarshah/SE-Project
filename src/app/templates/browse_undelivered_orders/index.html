@@ -8,7 +8,7 @@
 		{% include 'browse_undelivered_orders/js.html' %}
 		{% include 'browse_undelivered_orders/css.html' %}
 		{% include 'sections/navBar/index.html' %}
-		<h2>View Order</h2>
+		<h2>View Orders</h2>
 		<br/>
 		<table class="table">
 			<thead class="thead-dark">
@@ -35,7 +35,11 @@
 						<td>{{ order.get_priority_display }}</td>
 						<td>{{ order.status }}</td>
 						<td>{{ order.date_order_placed }}</td>
-						<td><input class="submitButton btn btn-primary" type="submit" value="Cancel Order" data-order-id='{{ order.id }}'/></td>
+						{% if order.status == "QUEUED_FOR_PROCESSING" %}
+						<td><input id="cancel" class="submitButton btn btn-primary" type="submit" value="Cancel Order" data-order-id='{{ order.id }}'/></td>
+						{% elif order.status == "DISPATCHED" %}
+						<td><input id="confirm" class="submitButton btn btn-primary" type="submit" value="Confirm Delivery" data-order-id='{{ order.id }}'/></td>
+						{% endif %}
 					</tr>
 				{% endfor %}
 			</tbody>
