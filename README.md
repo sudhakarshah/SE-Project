@@ -11,3 +11,5 @@ Run development server: ```python3 manage.py runserver```<br />
 
 
 Made using Python on Django  
+
+Email sending functionality not added (rather printed on the server log)
