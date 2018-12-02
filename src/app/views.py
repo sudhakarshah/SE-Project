@@ -366,15 +366,12 @@ def forgot_password(request):
 		result['reason'] = "Username does not exist"
 	else:
 		user = User.objects.get(username=request.POST['username'])
-		if user.email != request.POST['email']:
-			result['reason'] = "Incorrect matching email"
-		else:
-			profile = Profile.objects.get(user=user)
-			unique_token = str(uuid.uuid3(uuid.NAMESPACE_DNS, user.email))
-			profile.update_forgot_password_token(unique_token)
-			print("http://localhost:8000/app/enterNewPassword?token=" + unique_token + " send to " + profile.user.email)
-			result['success'] = True
-			result['pageLink'] = '/app'
+		profile = Profile.objects.get(user=user)
+		unique_token = str(uuid.uuid3(uuid.NAMESPACE_DNS, user.email))
+		profile.update_forgot_password_token(unique_token)
+		print("http://localhost:8000/app/enterNewPassword?token=" + unique_token + " send to " + profile.user.email)
+		result['success'] = True
+		result['pageLink'] = '/app'
 	return HttpResponse(json.dumps(result), content_type="application/json")
 
 
