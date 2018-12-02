@@ -1,3 +1,5 @@
 Django==2.1.2
 Pillow==5.3.0
 pytz==2018.6
+reportlab==3.5.9
+simplejson==3.16.0
