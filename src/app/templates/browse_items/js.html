@@ -1,0 +1,191 @@
+<script>
+
+	$(document).ready(() => {
+
+		var maxWeight = 23.8;
+		var currentWeight = 0;
+		var cart = [];
+
+		function addItem(id, name, weight) {
+			var item = {};
+			item.id = id;
+			item.weight = weight;
+			item.quantity = 1;
+			cart.push(item);
+			currentWeight = currentWeight + weight;
+
+			document.getElementById('currentWeight').innerHTML = 'Current weight is ' + currentWeight.toFixed(2) + ' kg';
+
+			var itemDiv = document.createElement('div');
+			itemDiv.id = 'cart-' + item.id;
+			itemDiv.className = 'block';
+			document.getElementById('cart').appendChild(itemDiv);
+
+			var para = document.createElement("span");
+			var node = document.createTextNode('Name: ' + name+' |                    ');
+			para.appendChild(node);
+
+			var element = document.getElementById('cart-' + item.id);
+			element.appendChild(para);
+
+			para = document.createElement("span");
+			para.setAttribute('id', 'quantity-id-'+item.id);
+			node = document.createTextNode('Quantity: '+ item.quantity);
+			para.appendChild(node);
+
+			element.appendChild(para);
+
+			addButton = document.createElement("button");
+			addButton.setAttribute('id', id);
+			addButton.setAttribute('class', 'AddButton btn btn-outline-warning');
+			addButton.setAttribute('data-item-id', id);
+			addButton.innerHTML = '+';
+			element.appendChild(addButton);
+
+			deleteButton = document.createElement("button");
+			deleteButton.setAttribute('id', id);
+			deleteButton.setAttribute('class', 'DeleteButton btn btn-outline-danger');
+			deleteButton.setAttribute('data-item-id', id);
+			deleteButton.innerHTML = '-';
+			element.appendChild(deleteButton);
+
+		}
+
+		$(document).on('click', '.AddButton', (evt) => {
+			var total = 0;
+			var itemId = $(evt.target).data("item-id");
+
+			$.each(cart, (i) => {
+				if(cart[i].id == itemId) {
+					cart[i].quantity += 1;
+					currentWeight = currentWeight + cart[i].weight;
+					document.getElementById('currentWeight').innerHTML = 'Current weight is ' + currentWeight.toFixed(2) + ' kg';
+					total = cart[i].quantity;
+					return false;
+				}
+			});
+			document.getElementById(`quantity-id-${itemId}`).innerHTML = 'Quantity: ' + total;
+			showSubmit();
+		});
+
+		$(document).on('click', '.DeleteButton', (evt) => {
+
+			var negativeWeight = false;
+			var total = 0;
+			var itemId = $(evt.target).data("item-id");
+
+			$.each(cart, (i) => {
+				if(cart[i].id == itemId) {
+					cart[i].quantity -= 1;
+					if(cart[i].quantity == 0) {
+						negativeWeight = true;
+					}
+					currentWeight = currentWeight - cart[i].weight;
+					document.getElementById('currentWeight').innerHTML = 'Current weight is ' + currentWeight.toFixed(2) + ' kg';
+					total = cart[i].quantity;
+					return false;
+				}
+			});
+
+			if(negativeWeight) {
+				$('#'+itemId).prop("checked", false);
+				deleteItem(itemId);
+			} else {
+				document.getElementById('quantity-id-'+itemId).innerHTML = 'Quantity: ' + total;
+			}
+			showSubmit();
+		});
+
+		function deleteItem(id) {
+
+			$.each(cart, (i) => {
+				if(cart[i].id == id) {
+					currentWeight = currentWeight - cart[i].weight * cart[i].quantity;
+					document.getElementById('currentWeight').innerHTML = 'Current weight is ' + currentWeight.toFixed(2) + ' kg';
+					cart.splice(i, 1);
+					return false;
+				}
+			});
+			// removing html dom element
+			document.getElementById('cart-' + id).remove();
+		}
+
+		$('input:checkbox').click(function() {
+
+			let isChecked = $(this).prop("checked");
+
+			if (isChecked) {
+				addItem($(this).attr('id'), $(this).data('name'), parseFloat($(this).data('weight')));
+			} else {
+				deleteItem($(this).attr('id'));
+			}
+			showSubmit();
+
+		});
+
+		function showSubmit() {
+			if(currentWeight > maxWeight) {
+				$('#warning').removeClass('hide').addClass('show');
+				$('#submitButton').removeClass('show').addClass('hide');
+			} else {
+				$('#warning').removeClass('show').addClass('hide');
+				$('#submitButton').removeClass('hide').addClass('show');
+			}
+		}
+
+		$.ajaxSetup({
+			beforeSend: (xhr, settings) => {
+				function getCookie(name) {
+					var cookieValue = null;
+					if (document.cookie && document.cookie != '') {
+						var cookies = document.cookie.split(';');
+						for (var i = 0; i < cookies.length; i++) {
+							var cookie = jQuery.trim(cookies[i]);
+							if (cookie.substring(0, name.length + 1) == (name + '=')) {
+								cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+								break;
+							}
+						}
+					}
+					return cookieValue;
+				}
+				if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+					xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+				}
+			}
+		 });
+
+		$("#submitButton").click(() => {
+			let orderData = [];
+			$.each(cart, (i) => {
+				orderData.push(JSON.stringify(cart[i]));
+			});
+			select_data = $('#priority_select').val();
+			$.ajax({
+				type: 'POST',
+				url: '/app/items/',
+				traditional: true,
+						dataType: 'html',
+				data: {
+					priority: select_data,
+					totalWeight: currentWeight,
+					'order[]': orderData
+				},
+				success: (result) => {
+					result = JSON.parse(result);
+					if (result.success) {
+						alert("Your Order Placed");
+						location.reload();
+					} else {
+						alert(result.reason);
+					}
+				}
+			});
+		});
+
+		$("#viewOrdersButton").click(() => {
+			window.location='/app/BrowseUndeliveredOrders/';
+		});
+
+	});
+</script>

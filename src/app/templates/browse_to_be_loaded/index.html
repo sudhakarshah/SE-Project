@@ -1,0 +1,55 @@
+<HTML>
+	<head>
+			<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+			<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.1/jquery.min.js"></script>
+			<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+	</head>
+  <BODY>
+		{% include 'browse_to_be_loaded/js.html' %}
+		{% include 'browse_to_be_loaded/css.html' %}
+		{% include 'sections/navBar/index.html' %}
+		<div id="header">
+			<h2 id="mainHeading" >Order To Be loaded Onto Drone</h2>
+		</div>
+		<br/>
+		<table class="table">
+			<thead class="thead-dark">
+				<tr>
+					<th scope="col">ID</th>
+					<th scope="col">Required Supplies</th>
+					<th scope="col">Total Weight</th>
+					<th scope="col">From Location</th>
+					<th scope="col">To Location</th>
+					<th scope="col">Priority</th>
+					<th scope="col">Order status</th>
+					<th scope="col">Date</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for order in order_list %}
+					<tr class="orders" id="{{ order.id }}" data-weight='{{ order.total_weight }}'>
+						<td>{{ order.id }}</td>
+						<td>{% for item in order.items.all %}{{ item.name }}<br/>{% endfor %}</td>
+						<td>{{ order.total_weight }} kg</td>
+						<td>{{ order.supplying_hospital.name }}</td>
+						<td>{{ order.ordering_clinic.name }}</td>
+						<td>{{ order.get_priority_display }}</td>
+						<td>{{ order.status }}</td>
+						<td>{{ order.date_order_placed }}</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+		<p>
+			Maximum weight = 25.00 kg (1.20 kg for Drone)
+		</p>
+		<p>
+			Current weight =
+			<span id="weight-show"></span> kg
+		</p>
+
+		<br/>
+		<br/>
+		<button id="dispatch" type="button" class="btn btn-warning">Dispatch drone and download CSV</button>
+  </BODY>
+</HTML>

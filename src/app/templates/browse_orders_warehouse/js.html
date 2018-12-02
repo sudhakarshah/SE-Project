@@ -1,0 +1,101 @@
+<script>
+
+		$(document).ready(() => {
+
+			if ($('.orders').length > 0) {
+				$('.packOrder').removeAttr('disabled');
+			} else {
+				$('.packOrder').attr('disabled','disabled');
+			}
+
+			$.ajaxSetup({
+				beforeSend: (xhr, settings) => {
+					function getCookie(name) {
+						var cookieValue = null;
+						if (document.cookie && document.cookie != '') {
+							var cookies = document.cookie.split(';');
+							for (var i = 0; i < cookies.length; i++) {
+								var cookie = jQuery.trim(cookies[i]);
+								if (cookie.substring(0, name.length + 1) == (name + '=')) {
+									cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+									break;
+								}
+							}
+						}
+						return cookieValue;
+					}
+					if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+						xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+					}
+				}
+			 });
+
+			$(".packOrder").click((evt) => {
+				let id = $('.orders')[0].id
+				$.ajax({
+					type: 'POST',
+					url: '/app/OrdersToBeProcessed/',
+					traditional: true,
+					dataType: 'html',
+					data: {
+						orderId: id,
+						event: 'READY_TO_PROCESS',
+					},
+					success: (result) => {
+						result = JSON.parse(result);
+						if (result.success) {
+							alert("Ready To Process");
+							location.reload();
+						} else {
+							alert(result.reason);
+						}
+					}
+				});
+			});
+
+			$(".completeProcessButton").click((evt) => {
+				let id = $(evt.target).data('order-id');
+				$.ajax({
+					type: 'POST',
+					url: '/app/OrdersToBeProcessed/',
+					traditional: true,
+					dataType: 'html',
+					data: {
+						orderId: id,
+						event: 'COMPLETE_PROCESSING',
+					},
+					success: (result) => {
+						result = JSON.parse(result);
+						if (result.success) {
+							alert("Completed Processing");
+							location.reload();
+						} else {
+							alert(result.reason);
+						}
+					}
+				});
+			});
+
+			$(".downloadButton").click((evt) => {
+				let id = $(evt.target).data('order-id');
+				$.ajax({
+					type: 'POST',
+					url: '/app/OrdersToBeProcessed/',
+					data: {
+						orderId: id,
+						event: 'DOWNLOAD_SHIPPING_LABEL',
+					},
+					success: (result) => {
+						// download of shipping label being executed
+						let blob = new Blob([result]);
+						let link = document.createElement('a');
+						link.href = window.URL.createObjectURL(blob);
+						link.download = "shipping_label_" + id + ".pdf";
+						link.click();
+					}
+				});
+			});
+
+		});
+
+	</script>

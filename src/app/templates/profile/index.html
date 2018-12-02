@@ -1,0 +1,49 @@
+<HTML>
+	<head>
+			<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+			<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+	</head>
+  <BODY>
+		{% include 'profile/js.html' %}
+		{% include 'profile/css.html' %}
+
+		<div class="split left">
+		  <div class="centered">
+		  	<div><b>Edit Details</b></div>
+		  	<div style="font-size: 10px">You can edit your details here!</div><br>
+			  <div class="form-group">
+				<h6 id="mainHeading">Username: </h6>
+			    <input name="username" type="text" value='{{user.username}}' class="form-control" id="username" placeholder="Username" readonly>
+			</div>
+			<div class="form-group">
+				<h6>Password: </h6>
+			    <input name="password" type="password" class="form-control" id="password" placeholder="Old Password">
+				<input name="newPassword" type="password" class="form-control" id="newPassword" placeholder="New Password">
+				<input name="reEnterNewPassword" type="password" class="form-control" id="reEnterNewPassword" placeholder="Re Enter New Password">
+			</div>
+		 	<div class="form-group">
+				<h6>First Name: </h6>
+			    <input name="firstname" type="text" value='{{profile.first_name}}' class="form-control" id="firstname" placeholder="First Name">
+			</div>
+			<div class="form-group">
+				<h6>Last Name: </h6>
+			    <input name="lastname" type="text" value='{{profile.last_name}}' class="form-control" id="lastname" placeholder="Last Name">
+			</div>
+			<div class="form-group">
+				<h6>Email: </h6>
+				<input name="email" type="text" value='{{user.email}}' class="form-control" id="email" placeholder="Email">
+			</div>
+			<div class="form-group">
+				<h6>Role: </h6>
+				<input name="role" type="text" value='{{profile.role}}' class="form-control" id="role" placeholder="Profile Group" readonly>
+			</div>
+			  <button id="edit" name="edit" type="button" class="btn btn-primary">SAVE CHANGES</button>
+		  </div>
+		</div>
+
+		<div class="split right">
+		  <div class="centered">
+		  </div>
+		</div>
+  </BODY>
+</HTML>

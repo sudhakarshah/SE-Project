@@ -1,0 +1,96 @@
+<script>
+
+	$(document).ready(() => {
+
+		const max_weight = 25;
+		let total_weight = 1.2;
+		let cart = [];
+		let list = $('.orders');
+		let is_cart_full = false;
+
+		// Onload of page, select the top items for loading to drone and highlight
+		for (let i = 0; i < list.length && !is_cart_full; i++) {
+				is_cart_full = addOrder(list[i].id, parseFloat(list[i].attributes[2].nodeValue));
+				if (!is_cart_full) {
+					list[i].style.backgroundColor = 'yellow';
+				}
+		}
+
+		// if elements in cart
+		if (cart.length > 0) {
+			$('#dispatch').removeAttr('disabled');
+		} else {
+			$('#dispatch').attr('disabled','disabled');
+		}
+
+		$('#weight-show').html(total_weight.toFixed(2));
+
+		function addOrder(id, weight) {
+			if (total_weight + weight > max_weight) {
+				return true;
+			} else {
+				cart.push(id);
+				total_weight = total_weight + weight;
+				return false;
+			}
+		}
+
+		$.ajaxSetup({
+			beforeSend: (xhr, settings) => {
+				function getCookie(name) {
+					var cookieValue = null;
+					if (document.cookie && document.cookie != '') {
+						var cookies = document.cookie.split(';');
+						for (var i = 0; i < cookies.length; i++) {
+							var cookie = jQuery.trim(cookies[i]);
+							if (cookie.substring(0, name.length + 1) == (name + '=')) {
+								cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+								break;
+							}
+						}
+					}
+					return cookieValue;
+				}
+				if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+					xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+				}
+			}
+		 });
+
+		$("#dispatch").click((evt) => {
+
+			$.ajax({
+				type: 'POST',
+				url: '/app/OrdersToBeLoaded/',
+				traditional: true,
+				dataType: 'html',
+				data: {
+					'orderIds[]': cart,
+					event: 'LOAD_INTO_DRONE'
+				},
+				success: (result) => {
+					result = JSON.parse(result);
+					if (!result.success) {
+						alert(result.reason);
+						return;
+					}
+					const rows = result.totalData;
+					let csvContent = "data:text/csv;charset=utf-8,";
+					rows.forEach(function(rowArray){
+						 let row = rowArray.join(",");
+						 csvContent += row + "\r\n";
+					});
+					let encodedUri = encodeURI(csvContent);
+					let link = document.createElement("a");
+					link.setAttribute("href", encodedUri);
+					link.setAttribute("download", "shipment.csv");
+					document.body.appendChild(link); // Required for FF
+					link.click();
+					alert('orders loaded to drone and dispatched')
+					location.reload();
+				}
+			});
+		});
+	});
+
+</script>

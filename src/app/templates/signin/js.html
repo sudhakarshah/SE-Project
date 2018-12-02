@@ -1,0 +1,66 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+
+	$(document).ready(() => {
+
+		$.ajaxSetup({
+			beforeSend: (xhr, settings) => {
+				function getCookie(name) {
+					var cookieValue = null;
+					if (document.cookie && document.cookie != '') {
+						var cookies = document.cookie.split(';');
+						for (var i = 0; i < cookies.length; i++) {
+							var cookie = jQuery.trim(cookies[i]);
+							if (cookie.substring(0, name.length + 1) == (name + '=')) {
+								cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+								break;
+							}
+						}
+					}
+					return cookieValue;
+				}
+				if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+					xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+				}
+			}
+		 });
+
+        $("#registerPage").click(() => {
+			window.location='/app/RegisterSendToken/';
+		});
+
+		$("#forgotPassword").click(() => {
+			window.location='/app/forgotPassword/';
+		});
+
+		$("#login").click((evt) => {
+			let username = $('#username').val();
+			let password = $('#password').val();
+			// incomplete form
+			if (!username || !password) {
+				console.log("fields not filled");
+				return;
+			}
+			$.ajax({
+				type: 'POST',
+				url: '/app/',
+				traditional: true,
+				dataType: 'json',
+				data: {
+				  username: username,
+					password: password,
+				},
+				success: (result) => {
+					console.log(result);
+					if (result.success) {
+							window.location = result.pageLink;
+					} else {
+					    alert("Login Unsuccessful");
+					    location.reload();
+					}
+				}
+			});
+		});
+	});
+
+</script>

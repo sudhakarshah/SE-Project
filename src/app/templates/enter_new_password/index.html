@@ -1,0 +1,30 @@
+<HTML>
+	<head>
+			<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+			<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.1/jquery.min.js"></script>
+			<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+	</head>
+  <BODY>
+		{% include 'enter_new_password/js.html' %}
+		{% include 'enter_new_password/css.html' %}
+
+		<div class="split left">
+		  <div class="centered">
+		  	<div id="heading"><b>Enter New Password</b></div>
+		  </br>
+			<div class="form-group">
+			  <input name="password" type="password" class="form-control" id="password" placeholder="Password">
+			</div>
+			<div class="form-group">
+			  <input name="reEnterPassword" type="password" class="form-control" id="reEnterPassword" placeholder="Re-enter Password">
+			</div>
+			  <button id="submit" name="submit" type="button" class="btn btn-primary">SUBMIT</button>
+		  </div>
+		</div>
+
+		<div class="split right">
+			{% include 'sections/poster/index.html' with imageLink="../photos/ui/image2.jpeg" %}
+		</div>
+
+  </BODY>
+</HTML>

@@ -1,0 +1,57 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+
+	$(document).ready(() => {
+
+		$.ajaxSetup({
+			beforeSend: (xhr, settings) => {
+				function getCookie(name) {
+					var cookieValue = null;
+					if (document.cookie && document.cookie != '') {
+						var cookies = document.cookie.split(';');
+						for (var i = 0; i < cookies.length; i++) {
+							var cookie = jQuery.trim(cookies[i]);
+							if (cookie.substring(0, name.length + 1) == (name + '=')) {
+								cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+								break;
+							}
+						}
+					}
+					return cookieValue;
+				}
+				if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+					xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+				}
+			}
+		 });
+
+		$("#forgotPassword").click((evt) => {
+			let username = $('#username').val();
+			// incomplete form
+			if (!username) {
+				console.log("Fields not filled");
+				return;
+			}
+			$.ajax({
+				type: 'POST',
+				url: '/app/forgotPassword/',
+				traditional: true,
+				dataType: 'json',
+				data: {
+				    username: username,
+				},
+				success: (result) => {
+					console.log(result);
+					if (result.success) {
+					    alert("Password Request sent to admin");
+						window.location = result.pageLink;
+					} else {
+					    alert(result.reason);
+					    location.reload();
+					}
+				}
+			});
+		});
+	});
+
+</script>
